@@ -32,7 +32,6 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.Bold,
     fontSize: ms(18),
     color: COLORS.black,
-
     borderBottomWidth: ms(4),
     borderColor: COLORS.red,
   },
@@ -40,6 +39,6 @@ const styles = StyleSheet.create({
   PasivePage: {
     fontFamily: FONTS.Regular,
     color: COLORS.grey,
-    fontSize: ms(14),
+    fontSize: ms(16),
   },
 });

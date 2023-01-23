@@ -1,11 +1,21 @@
 import React from 'react';
 import {Text, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import { ms } from 'react-native-size-matters';
 import {COLORS} from '../../Utils/Colors';
 import {FONTS} from '../../Utils/Fonts';
 
 const Button = ({caption, onPress,disabled,style,styleText}) => {
   return (
-    <TouchableOpacity style={[styles.Container,{width:caption=="Preview"||caption=="Posting"?window.width * 0.75:window.width * 0.75,marginHorizontal:5,backgroundColor:caption=="Delete"?"#871f1b":'#666666'},style]} onPress={onPress} disabled={disabled}>
+    <TouchableOpacity 
+      style={
+        [styles.Container,
+        {width:caption=="Preview"||
+          caption=="Posting"?
+          window.width * 0.75:window.width * 0.75,
+          marginHorizontal:5,
+          backgroundColor:COLORS.red},style]} 
+          onPress={onPress} 
+          disabled={disabled}>
       <Text style={[styles.Text,styleText]}>{caption}</Text>
     </TouchableOpacity>
   );
@@ -25,7 +35,7 @@ const styles = StyleSheet.create({
   },
   Text: {
     fontFamily: FONTS.Bold,
-    fontSize: 15,
+    fontSize: ms(16),
     color: COLORS.white,
   },
 });

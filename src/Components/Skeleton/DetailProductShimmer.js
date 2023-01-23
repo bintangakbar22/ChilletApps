@@ -26,26 +26,6 @@ const DetailProductShimmer = () => {
             borderBottomRightRadius: ms(10),
           }}
         />
-        <View
-          style={{
-            width: window.width * 0.9,
-            alignSelf: 'center',
-            flexDirection: 'row',
-            marginTop: ms(20),
-            paddingHorizontal: ms(20),
-          }}>
-          <View style={{width: ms(50), height: ms(50), borderRadius: ms(10)}} />
-          <View
-            style={{
-              marginLeft: ms(10),
-              justifyContent: 'center',
-            }}>
-            <View
-              style={{width: ms(230), height: ms(20), marginBottom: ms(4)}}
-            />
-            <View style={{width: ms(150), height: ms(15)}} />
-          </View>
-        </View>
         <View style={{width: window.width * 0.8, alignSelf: 'center'}}>
           <View
             style={{

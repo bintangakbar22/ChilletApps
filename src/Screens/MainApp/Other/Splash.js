@@ -6,7 +6,7 @@ import {COLORS} from '../../../Utils/Colors';
 const Splash = ({navigation}) => {
   useEffect(() => {
     setTimeout(() => {
-      navigation.replace('MainApp');
+      navigation.replace('Auth');
     }, 500);
   }, []);
 

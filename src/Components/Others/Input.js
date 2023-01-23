@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {
   View,
   Text,
-  // TextInput,
+  TextInput,
   TouchableOpacity,
   StyleSheet,
   Dimensions,
@@ -11,7 +11,6 @@ import {ms} from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {COLORS} from '../../Utils/Colors';
 import {FONTS} from '../../Utils/Fonts';
-import { TextInput,TextInputProps } from "@react-native-material/core";
 
 const Input = ({
   icon,
@@ -22,19 +21,20 @@ const Input = ({
   secureTextEntry,
   screen,
   onPress,
-  numeric
+  numeric,
+  isPassword
 }) => {
   const [isSecureText, setIsSecureText] = useState(secureTextEntry);
   const [isActive, setIsActive] = useState(false);
 
   return (
     <View style={styles.Container}>
-      {/* <View
+      <View
         style={{
           ...styles.Content,
           borderColor: isActive ? COLORS.black : COLORS.grey,
           width:placeholder=='Search'?window.width * 0.75:window.width * 0.8
-        }}> */}
+        }}>
         <Icon style={styles.Icon} name={icon} size={20} color={COLORS.dark} />
         {numeric ?  
           <TextInput
@@ -49,7 +49,6 @@ const Input = ({
           placeholderTextColor={COLORS.grey}
           maxLength={10}
           variant="outlined" label="Label"
-          inputStyle ={[styles.Input, {marginHorizontal: screen == 'jual' ? 0 : 15}]}
         />
         :
           <TextInput
@@ -63,11 +62,8 @@ const Input = ({
           placeholderTextColor={COLORS.grey}
         />
         }
-        
-        {placeholder == 'Password' ||
-          placeholder == 'Current Password' ||
-          placeholder == 'New Password' ||
-          (placeholder == 'Confirm Password' && (
+        {
+          isPassword  && (
             <TouchableOpacity
               onPress={() => {
                 setIsSecureText(val => !val);
@@ -78,13 +74,13 @@ const Input = ({
                 color={COLORS.dark}
               />
             </TouchableOpacity>
-          ))}
+          )}
         {placeholder == 'Search' && (
           <TouchableOpacity onPress={onPress}>
             <Icon name={'store-search'} size={ms(30)} color={COLORS.dark} />
           </TouchableOpacity>
         )}
-      {/* </View> */}
+      </View>
       <Text style={styles.Text}>{error}</Text>
     </View>
   );

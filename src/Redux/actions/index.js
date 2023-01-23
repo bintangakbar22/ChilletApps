@@ -39,6 +39,12 @@ import {
   GET_ORDER_BUYER_PENDING_SPECIFIC,
   GET_ORDER_SELLER_PENDING_SPECIFIC,
   GET_ORDER_BUYER_INDELIVERY,
+  ADD_CART,
+  GET_NUMBER_CART,
+  UPDATE_CART,
+  DELETE_CART,
+  INCREASE_QUANTITY,
+  DECREASE_QUANTITY,
 } from '../types';
 import {URL} from '../../Utils/Url';
 
@@ -61,108 +67,102 @@ export const typeUser = data => ({
 export const fetchingLogin = data => {
   return async dispatch => {
     const {email, password} = data;
-    if((email.length==0) || (password.length==0)){
-            SimpleToast.show("Required Field is Missing!");
-    }else{
-        var APIURL = url+"/auth/login.php";
-        var headers = {
-            'Accept' : 'application/json',
-            'Content-Type' : 'application/json'
-        };
-        var Data ={
-            email: email,
-            password: password
-        };
-        await fetch(APIURL,{
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(Data)
-        })
-        .then((Response)=>Response.json())
-        .then((Response)=>{
-            if (Response.message == "Success") { 
-              console.log("login user s:",Response.data)
-                Toast.show({
-                  type: 'success',
-                  text1: 'Login Successful!',
-                });
-                dispatch({
-                  type: FETCH_LOGIN,
-                  payload: Response.data,
-                });
-            }else if (Response.message == "email or password are wrong") { 
-                Toast.show({
-                  type: 'error',
-                  text1: 'Email or Password Missmatch!',
-                });
-            }else{
-                Toast.show({
-                  type: 'error',
-                  text1: 'Email or Password Missmatch!',
-                });
-            }
-        })
-      }
+    await axios
+      .post(URL + 'login', {
+        email: email,
+        password: password,
+      })
+      .then(res => {
+        console.log(res.data)
+        Toast.show({
+          type: 'success',
+          text1: 'Login Successful!',
+        });
+        dispatch({
+          type: FETCH_LOGIN,
+          payload: res.data.data,
+          userData : res.data.data.user,
+          accessToken:res.data.data.access_token,
+          idUser : res.data.data.user.id
+        });
+      })
+      .catch(function (error) {
+          Toast.show({
+            type: 'error',
+            text1: 'Email or Password wRong',
+          });
+      });
   };
 };
 
-export const fetchingRegister = data => {
+export const fetchingRegister = (data,photo) => {
     return async dispatch => {
-      const {name, email, password, phone, address, city} = data;
-      var APIURL = url+"/auth/register.php";
-      var headers = {
-          'Accept' : 'application/json',
-          'Content-Type' : 'application/json'
-      };
-      var Data ={
-          full_name: name,
-          email: email,
-          password: password,
-          phone_number: parseInt(phone),
-          address: address,
-          city: city,
-      };
-      await fetch(APIURL,{
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(Data)
-      })
-      .then((Response)=>Response.json())
-      .then((Response)=>{
-          if (Response.message == "Success") { 
-              dispatch(authScreen('Login'));
-              Toast.show({
-                type: 'success',
-                text1: 'Register Successful!',
-              });
-          }else{
-              Toast.show({
+      const {name, email, password, password_confirmation} = data;
+      RNFetchBlob.fetch('POST', URL+'register', {
+          Authorization: "Bearer access-token",
+          otherHeader: "foo",
+          'Content-Type': 'multipart/form-data',
+      }, [
+          {name:'name',data:name},
+          {name:'email',data:email},
+          {name:'password',data:password},
+          {name:'password_confirmation',data:password_confirmation},
+          {name: 'photo', filename: 'image.png', type: 'image/png', data: photo?photo:"" },
+          ]).then((resp) => {
+            Toast.show({
+              type: 'success',
+              text1: 'Register Successful!',
+            });
+            dispatch(authScreen('Login'));
+          }).catch(err=>{
+            console.log(err)
+            Toast.show({
                 type: 'error',
-                text1: 'Email already exists!',
-              });
-          }
+                text1: 'Something Went Wrong!!!',
+            });
       })
   };
 };
 
-export const getUserData = id => {
-    return async dispatch => {
-      var APIURL = url+"/auth/user.php?method=get&id="+id;
-      var headers = {
-          'Accept' : '*/*',
-      };
-      await fetch(APIURL,{
-          method: 'GET',
-          headers: headers,
+export const getUserData = (AccessToken) => {
+  return async dispatch => {
+    await axios
+      .get(URL + 'user',{
+        headers: {
+          "Authorization": `Bearer ${AccessToken}`
+        }, 
       })
-      .then((Response)=>Response.json())
-      .then((Response)=>{
-          if (Response.message == "Success") { 
-              dispatch({
-                type: GET_USER_DATA,
-                payload: Response.data,
-              });
-          }
+      .then(res => {
+        dispatch({
+          type: GET_USER_DATA,
+          payload: res.data.data,
+        });
+      })
+  };
+};
+
+export const getProduct = (category_id, search) => {
+  return async dispatch => {
+      await axios
+      .get(URL + 'products')
+      .then(res => {
+        dispatch({
+          type: GET_PRODUCT,
+          payload: res.data.data.products,
+        });
+      })
+  };
+};
+
+export const getSpesificProductBuyer = (id) => {
+  return async dispatch => {
+      await axios
+      .get(URL + 'product/'+id)
+      .then(res => {
+        dispatch({
+          type: GET_SPESIFIC_PRODUCT_BUYER,
+          payload: res.data.data.product,
+        });
       })
   };
 };
@@ -255,9 +255,26 @@ export const updatePassword = (data, id) => {
   };
 };
 
-export const goLogout = () => ({
-  type: LOGOUT,
-});
+export const goLogout = (AccessToken) => {
+  return async dispatch => {
+    await axios
+      .post(URL + 'logout',{},{
+        headers: {
+          Accept: 'application/json',
+          "Authorization": `Bearer ${AccessToken}`
+        },
+      })
+      .then(res => {
+        Toast.show({
+          type: 'success',
+          text1: 'Success Logout!',
+        });
+        dispatch({
+            type: LOGOUT,
+        });
+      })
+  }
+};
 
 export const getBanner = () => {
   return async dispatch => {
@@ -288,295 +305,63 @@ export const getBanner = () => {
 };
 
 
-export const getProduct = (category_id, search) => {
-  return async dispatch => {
-      var APIURL;
-      if(category_id!=''){
-        APIURL = url+"/buyer/product.php?method=get&category_id="+category_id;
-      }else if(search!=''){
-        APIURL = url+"/buyer/product.php?method=get&search="+search;
-      }else{
-        APIURL = url+"/buyer/product.php?method=get";
-      }
-      var headers = {
-          'Accept' : '*/*',
-      };
-      await fetch(APIURL,{
-          method: 'GET',
-          headers: headers,
-      })
-      .then((Response)=>Response.json())
-      .then((Response)=>{
-          if (Response.message == "Success") { 
-            console.log(Response.data)
-              dispatch({
-                type: GET_PRODUCT,
-                payload: Response.data,
-              });
-          }else{
-              dispatch({
-                type: GET_PRODUCT,
-                payload: [],
-              });
-          }
-      })
-  };
-};
+
 
 export const clearProduct = () => ({
   type: CLEAR_PRODUCT,
 });
 
-export const addCart = (productId, id) => {
-  return async () => {
-      var APIURL = url+"/buyer/cart.php?method=post";
-      var headers = {
-          'Accept' : 'application/json',
-          'Content-Type' : 'application/json'
-      };
-      var Data ={
-          id_user:id,
-          id_product :productId
-      };
-      await fetch(APIURL,{
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(Data)
-      })
-      .then((Response)=>Response.json())
-      .then((Response)=>{
-          if (Response.message == "Success") { 
-              Toast.show({
-                type: 'success',
-                text1: 'Successful Add to Cart!',
-              });
-          }else if(Response.message=="Max cart"){
-              Toast.show({
-                type: 'error',
-                text1: 'Max Cart 5 Product!',
-              });
-          }else if(Response.message=="Own Product"){
-              Toast.show({
-                type: 'error',
-                text1: 'You cannot buy your own Product!',
-              });
-          }
-      })
-  };
-};
-
-export const getCart = (id) => {
+export const GetNumberCart = (product) =>{
   return async dispatch => {
-      var APIURL = url+"/buyer/cart.php?method=get&id="+id;
-      var headers = {
-          'Accept' : '*/*',
-      };
-      await fetch(APIURL,{
-          method: 'GET',
-          headers: headers,
-      })
-      .then((Response)=>Response.json())
-      .then((Response)=>{
-          if (Response.message == "Success") { 
-            console.log(Response.data)
-              dispatch({
-                type: GET_CART,
-                payload: Response.data,
-              });
-          }
-      })
-  };
-};
+    await dispatch( {
+        type:"GET_NUMBER_CART",
+        payload:product
+    })
+}}
 
-export const removeCart = (id,id_cart) => {
-  return async () => {
-      var APIURL = url+"/buyer/cart.php?method=delete";
-      var headers = {
-          'Accept' : 'application/json',
-          'Content-Type' : 'application/json'
-      };
-      var Data ={
-          id_user:id,
-          id_cart :id_cart
-      };
-      console.log(Data)
-      await fetch(APIURL,{
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(Data)
-      })
-      .then((Response)=>Response.json())
-      .then((Response)=>{
-          if (Response.message == "Success") { 
-              Toast.show({
-                type: 'success',
-                text1: 'Successful Remove from Cart!',
-              });
-          }
-      })
-  };
-};
-
-export const updateCart = (id,id_cart,type) => {
-  return async () => {
-      var APIURL = url+"/buyer/cart.php?method=update";
-      var headers = {
-          'Accept' : 'application/json',
-          'Content-Type' : 'application/json'
-      };
-      var Data ={
-          id_user:id,
-          id_cart :id_cart,
-          type:type
-      };
-      console.log(Data)
-      await fetch(APIURL,{
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(Data)
-      })
-      .then((Response)=>Response.json())
-      
-  };
-};
-
-
-export const addWishlist = (productId, id) => {
-  return async () => {
-      var APIURL = url+"/buyer/wishlist.php?method=post";
-      var headers = {
-          'Accept' : 'application/json',
-          'Content-Type' : 'application/json'
-      };
-      var Data ={
-          id_user:id,
-          product_id :productId
-      };
-      await fetch(APIURL,{
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(Data)
-      })
-      .then((Response)=>Response.json())
-      .then((Response)=>{
-          if (Response.message == "Success") { 
-              Toast.show({
-                type: 'success',
-                text1: 'Successful Add to Wishlist!',
-              });
-          }
-      })
-  };
-};
-
-export const getWishlist = (id) => {
+export const AddCart = (product) =>{
   return async dispatch => {
-      var APIURL = url+"/buyer/wishlist.php?method=get&id="+id;
-      var headers = {
-          'Accept' : '*/*',
-      };
-      await fetch(APIURL,{
-          method: 'GET',
-          headers: headers,
-      })
-      .then((Response)=>Response.json())
-      .then((Response)=>{
-          if (Response.message == "Success") { 
-            console.log(Response.data)
-              dispatch({
-                type: GET_WISHLIST,
-                payload: Response.data,
-              });
-          }
-      })
-  };
-};
+    await dispatch( {
+        type:"ADD_CART",
+        payload:product
+    })
+    Toast.show({
+      type: 'success',
+      text1: 'Success To Add Cart!',
+    });
+}}
 
-export const removeWishlist = (id,id_wishlist) => {
-  return async () => {
-      var APIURL = url+"/buyer/wishlist.php?method=delete";
-      var headers = {
-          'Accept' : 'application/json',
-          'Content-Type' : 'application/json'
-      };
-      var Data ={
-          id_user:id,
-          id_wishlist :id_wishlist
-      };
-      console.log(Data)
-      await fetch(APIURL,{
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(Data)
-      })
-      .then((Response)=>Response.json())
-      .then((Response)=>{
-          if (Response.message == "Success") { 
-              Toast.show({
-                type: 'success',
-                text1: 'Successful Remove from Wishlist!',
-              });
-          }
-      })
-  };
-};
-
-export const postProduct = (data, id, category,condition,image) => {
+export const UpdateCart = (product) =>{
   return async dispatch => {
-    const {name, description, base_price, location,stock} = data;
-        var APIURL = url+"/seller/product.php?method=post";
-        var headers = {
-            'Accept' : 'application/json',
-            'Content-Type' : 'application/json'
-        };
-        var Data ={
-            id_user : id,
-            name :name,
-            description:description,
-            price:base_price,
-            location:location,
-            category_ids:category,
-            condition:condition,
-            stock : stock
-        };
-        await fetch(APIURL,{
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(Data)
-        })
-        .then((Response)=>Response.json())
-        .then((Response)=>{
-            if (Response.message == "Success") { 
-                console.log("sucess post")
-                RNFetchBlob.fetch('POST', url+'seller/product.php?method=uploadPhoto', {
-                  Authorization: "Bearer access-token",
-                  otherHeader: "foo",
-                  'Content-Type': 'multipart/form-data',
-                }, [
-                    { name: 'image', filename: 'image.png', type: 'image/png', data: image },
-                    { name: 'id_product', data: Response.data.id_product},
-                  ]).then((resp) => {
-                    console.log("Upload Berhasil")
-                    Toast.show({
-                      type: 'success',
-                      text1: 'Success Post Product!',
-                    });
-                  }).catch((err) => {
-                    console.log("Upload gagal")
-                    Toast.show({
-                      type: 'error',
-                      text1: 'Failed Post Photo!',
-                    });
-                  })
-            }else {
-                Toast.show({
-                  type: 'error',
-                  text1: 'Failed Post Product!',
-                });
-            }
-        })
-  };
-};
+    await dispatch( {
+        type:"UPDATE_CART",
+        payload:product
+    })
+}}
+
+export const DeleteCart = (product) =>{
+  return async dispatch => {
+    await dispatch( {
+        type:"DELETE_CART",
+        payload:product
+    })
+}}
+
+export const IncreaseQuantity = (product) =>{
+  return async dispatch => {
+    await dispatch( {
+        type:"INCREASE_QUANTITY",
+        payload:product
+    })
+}}
+export const DecreaseQuantity = (product) =>{
+  return async dispatch => {
+    await dispatch( {
+        type:"DECREASE_QUANTITY",
+        payload:product
+    })
+}}
+
 
 export const DaftarJualScreen = data => ({
   type: DAFTARJUAL_SCREEN,
@@ -642,7 +427,7 @@ export const getWishlistSeller = AccessToken => {
 };
 
 export const rupiah = number => {
-  let reverse ;
+  let reverse,thousand ;
   if(typeof number =="number"){
     reverse =  number.toString().split('').reverse().join('')
      thousand = reverse.match(/\d{1,3}/g);
@@ -988,30 +773,6 @@ export const getWishlistSpesific = (AccessToken, id) => {
       });
   };
 };
-
-export const getSpesificProductBuyer = (id) => {
-  return async dispatch => {
-      var APIURL = url+"/buyer/product.php?method=get_spesific&id="+id;
-      var headers = {
-            'Accept' : '*/*',
-      };
-      await fetch(APIURL,{
-          method: 'GET',
-          headers: headers,
-      })
-      .then((Response)=>Response.json())
-      .then((Response)=>{
-          if (Response.message == "Success") { 
-              dispatch({
-                type: GET_SPESIFIC_PRODUCT_BUYER,
-                payload: Response.data,
-              });
-          }
-      })
-  };
-};
-
-
 
 export const getStatusOrder = AccessToken => {
   return async dispatch => {

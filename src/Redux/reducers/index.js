@@ -38,17 +38,25 @@ import {
   GET_ORDER_SELLER_INDELIVERY,
   GET_ORDER_SELLER_DONE,
   GET_ORDER_BUYER_PENDING_SPECIFIC,
-  GET_ORDER_SELLER_PENDING_SPECIFIC
+  GET_ORDER_SELLER_PENDING_SPECIFIC,
+  ADD_CART,
+  GET_NUMBER_CART,
+  INCREASE_QUANTITY,
+  DECREASE_QUANTITY,
+  DELETE_CART
 } from '../types';
 const initialState = {
+  Carts:[],
+  numberCart:0,
   authScreen: 'Login',
-  userType: 'Buyer',
   loginUser: null,
   userData: {},
+  accessToken:null,
+  idUser :null,
   banner: [],
   product: [],
   wishlist: [],
-  cart:[],
+  productToCart:{},
   wishlistDataSeller: null,
   productDataSeller: [],
   daftarJualScreen: 'Product',
@@ -80,6 +88,8 @@ const initialState = {
 
 const Reducer = (state = initialState, action) => {
   switch (action.type) {
+    
+
     case TYPE_USER:
       return {
         ...state,
@@ -90,10 +100,80 @@ const Reducer = (state = initialState, action) => {
         ...state,
         authScreen: action.payload,
       };
+    case GET_NUMBER_CART:
+            return{
+                ...state
+            }
+    case ADD_CART:
+        if(state.numberCart==0){
+            let cart = {
+                id:action.payload.id,
+                quantity:1,
+                name:action.payload.name,
+                image:action.payload.image,
+                price:action.payload.price,
+                user_id:state.userData.id
+            } 
+            state.Carts.push(cart); 
+        }
+        else{
+            let check = false;
+            state.Carts?.map((item,key)=>{
+                if(item.id==action.payload.id){
+                    state.Carts[key].quantity++;
+                    check=true;
+                }
+            });
+            if(!check){
+                let _cart = {
+                    id:action.payload.id,
+                    quantity:1,
+                    name:action.payload.name,
+                    image:action.payload.image,
+                    price:action.payload.price,
+                    user_id:state.userData.id
+                }
+                state.Carts.push(_cart);
+            }
+        }
+        return{
+            ...state,
+            numberCart:state.numberCart+1
+        }
+    case INCREASE_QUANTITY:
+        state.numberCart++
+        state.Carts[action.payload].quantity++;
+      
+        return{
+            ...state
+        }
+    case DECREASE_QUANTITY:
+        let quantity = state.Carts[action.payload].quantity;
+        if(quantity>1){
+            state.numberCart--;
+            state.Carts[action.payload].quantity--;
+        }
+      
+        return{
+            ...state
+        }
+    case DELETE_CART:
+        let quantity_ = state.Carts[action.payload].quantity;
+        return{
+            ...state,
+            numberCart:state.numberCart - quantity_,
+            Carts:state.Carts.filter(item=>{
+                return item.id!=state.Carts[action.payload].id
+            })
+            
+        }
     case FETCH_LOGIN:
       return {
         ...state,
         loginUser: action.payload,
+        userData : action.userData,
+        accessToken:action.accessToken,
+        idUser : action.idUser
       };
     case GET_USER_DATA:
       return {
@@ -132,42 +212,6 @@ const Reducer = (state = initialState, action) => {
       return {
         ...state,
         wishlist: action.payload,
-      };
-    case DAFTARJUAL_SCREEN:
-      return {
-        ...state,
-        daftarJualScreen: action.payload,
-      };
-    case NOTIFICATION_SCREEN:
-      return {
-        ...state,
-        notifScreen: action.payload,
-      };
-
-    case GET_PRODUCT_SELLER:
-      return {
-        ...state,
-        productDataSeller: action.payload,
-      };
-    case GET_WISHLIST_SELLER:
-      return {
-        ...state,
-        wishlistDataSeller: action.payload,
-      };
-    case GET_NOTIFICATION_SELLER:
-      return {
-        ...state,
-        notifDataSeller: action.payload,
-      };
-    case GET_NOTIFICATION_BUYER:
-      return {
-        ...state,
-        notifDataBuyer: action.payload,
-      };
-    case GET_CATEGORY:
-      return {
-        ...state,
-        category: action.payload,
       };
     case GET_SPESIFIC_PRODUCT:
       return {
@@ -219,66 +263,7 @@ const Reducer = (state = initialState, action) => {
         ...state,
         connection: false,
       };
-    case GET_HISTORY:
-      return {
-        ...state,
-        history: action.payload,
-      };
-    case GET_HISTORY_PRODUCT:
-      return {
-        ...state,
-        historyProduct: action.payload,
-      };
-    case GET_CART:
-      return {
-        ...state,
-        cart: action.payload,
-      };
-    case TRANSACTION_SCREEN:
-      return {
-        ...state,
-        transactionScreen: action.payload,
-    };
-    case GET_ORDER_BUYER_PENDING:
-      return {
-        ...state,
-        orderBuyerPending: action.payload,
-    };
-    case GET_ORDER_BUYER_INDELIVERY:
-      return {
-        ...state,
-        orderBuyerinDelivery: action.payload,
-    };
-    case GET_ORDER_BUYER_DONE:
-      return {
-        ...state,
-        orderBuyerDone: action.payload,
-    };
-    case GET_ORDER_SELLER_PENDING:
-      return {
-        ...state,
-        orderSellerPending: action.payload,
-    };
-    case GET_ORDER_SELLER_INDELIVERY:
-      return {
-        ...state,
-        orderSellerinDelivery: action.payload,
-    };
-    case GET_ORDER_SELLER_DONE:
-      return {
-        ...state,
-        orderSellerDone: action.payload,
-    };
-    case GET_ORDER_BUYER_PENDING_SPECIFIC:
-      return {
-        ...state,
-        orderBuyerPendingSpecific: action.payload,
-    };
-    case GET_ORDER_SELLER_PENDING_SPECIFIC:
-      return {
-        ...state,
-        orderSellerPendingSpecific: action.payload,
-    };
+
     default:
       return state;
   }
