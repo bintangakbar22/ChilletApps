@@ -3,7 +3,6 @@ import {
   Text,
   View,
   ScrollView,
-  Image,
   StatusBar,
   ImageBackground,
   Dimensions,
@@ -15,14 +14,15 @@ import {
 import React, {useState, useEffect, useCallback} from 'react';
 import {COLORS, FONTS} from '../../../Utils';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   AddCart,
   connectionChecker,
-  deleteProduct,
   rupiah,
-  getCart,
-  getCategory,
-  getSpesificProductBuyer
+  getSpesificProductBuyer,
+  IncreaseQuantity,
+  DecreaseQuantity,
+  DeleteCart
 } from '../../../Redux/actions';
 import {useDispatch, useSelector} from 'react-redux';
 import Button from '../../../Components/Others/Button';
@@ -37,25 +37,32 @@ const Detail = ({route}) => {
   const isFocused = useIsFocused();
 
   const connection = useSelector(state => state.appData.connection);
-  const loginUser = useSelector(state => state.appData.loginUser);
   const userData = useSelector(state => state.appData.userData);
   const Carts = useSelector(state => state.appData.Carts) 
   
   const productSpesific = useSelector(state => state.appData.productSpesificBuyer);
-
   var checkCart = Carts?.filter(itemS => {
-    return itemS.product_id == productSpesific.id;
-  }).map(i => {
-    return i.id;
+    return itemS.id == productSpesific.id;
   })
+
+  const indexProductOfCarts = Carts.findIndex(object => {
+    return object.id === productSpesific.id;
+  });
+
+  console.log(Carts)
 
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const addtoCart = (prod) =>{
-    dispatch(AddCart(prod)).then(()=>{
-      navigation.navigate("Home")
-    })
+    const product = {
+      ...prod,
+      user_id:userData.id
+    }
+    dispatch(AddCart(product))
+      .then(()=>{
+        dispatch(getSpesificProductBuyer(product_id))
+      })
   }
 
   const cekData = () =>{
@@ -77,7 +84,21 @@ const Detail = ({route}) => {
         setLoading(false)
         setRefreshing(false);
       })
-    
+  }, []);
+
+  const handlePlus = useCallback(id => {
+    dispatch(IncreaseQuantity(id))
+      .then(dispatch(getSpesificProductBuyer(product_id)));
+  }, []);
+
+  const handleMin = useCallback(id => {
+    dispatch(DecreaseQuantity(id))
+      .then(dispatch(getSpesificProductBuyer(product_id)));
+  }, []);
+
+  const handleRemove = useCallback(id => {
+    dispatch(DeleteCart(id))
+      .then(dispatch(getSpesificProductBuyer(product_id)));
   }, []);
 
   return (
@@ -123,27 +144,59 @@ const Detail = ({route}) => {
             <Text style={styles.DescriptionText}>
               {productSpesific?.description}
             </Text>
-            <Text style={styles.SubTitle}>Stock</Text>
+            {/* <Text style={styles.SubTitle}>Stock</Text>
             <Text style={styles.DescriptionText}>
               {productSpesific?.stock}
-            </Text>
+            </Text> */}
           </View>
           <View style={styles.Button}>
-                {/* {checkCart?.length!=0  ? (
-                  <Button
-                    caption={'Already in Cart'}
-                    style={{width: window.width * 0.9,backgroundColor:COLORS.grey}}
-                    disabled
-                  />
-                ) : ( */}
+                {checkCart?.length!=0  ? (
+                  <View style={{flexDirection:'row',justifyContent:'space-between',width:window.width}}>
+                    <Button
+                        caption={'Remove from Cart'}
+                        style={{width: window.width * 0.52,backgroundColor:COLORS.red,marginLeft:ms(15)}}
+                        onPress={()=>{handleRemove(indexProductOfCarts)}}
+                      />
+                    <View style={{flexDirection:'row',width:window.width*0.4,justifyContent:'space-evenly',alignItems:'center',marginTop:ms(10)}}>
+                      {checkCart[0]?.quantity>1?
+                      <TouchableOpacity
+                        style={[
+                            styles.AddWishlist,
+                        ]}
+                        onPress={()=>{handleMin(indexProductOfCarts)}}>
+                        <Icon name={'minus-circle-outline'} size={ms(30)} color={COLORS.red} />
+                      </TouchableOpacity>
+                      :
+                      <TouchableOpacity
+                        style={[
+                            styles.AddWishlist,
+                        ]}
+                        onPress={()=>{handleMin(indexProductOfCarts)}} disabled>
+                        <Icon name={'minus-circle-outline'} size={ms(30)} color={COLORS.grey} />
+                      </TouchableOpacity>
+                      }
+                      <View style={{padding:ms(10),paddingVertical:ms(1),borderRadius:ms(8),borderWidth:ms(0.5),borderColor:COLORS.grey}}>
+                        <Text style={[styles.Price,{fontSize:ms(18)}]} >{checkCart[0]?.quantity}</Text>
+                      </View>
+                        
+                      <TouchableOpacity
+                        style={[
+                            styles.AddWishlist,
+                        ]}
+                        onPress={()=>{handlePlus(indexProductOfCarts)}}>
+                        <Icon name={'plus-circle-outline'} size={ms(30)} color={COLORS.green} />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ) : (
                   <Button
                     caption={'Add to Cart'}
-                    style={{width: window.width * 0.9,backgroundColor:COLORS.primaryBlue}}
+                    style={{width: window.width * 0.9,backgroundColor:COLORS.green}}
                     onPress={() => {
                       addtoCart(productSpesific);
                     }}
                   />
-                {/* )} */}
+                )}
           </View>
         </ScrollView>
       )}
@@ -166,20 +219,18 @@ const styles = StyleSheet.create({
   },
   Image: {
     backgroundColor: COLORS.lightGrey,
-    width: window.width * 1,
-    height: ms(250),
-
+    width: window.width ,
+    height: ms(400),
     flexDirection: 'column',
     justifyContent: 'space-between',
     paddingTop: StatusBarManager.HEIGHT + ms(10),
     paddingHorizontal: ms(20),
-
     resizeMode: 'cover',
   },
   Header: {
     width: ms(45),
     padding: ms(10),
-    backgroundColor: COLORS.grey,
+    backgroundColor: COLORS.red,
     borderRadius: ms(50),
   },
   Card: {

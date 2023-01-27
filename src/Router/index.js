@@ -4,7 +4,9 @@ import {
   Splash,
   Auth,
   Detail,
-  Cart
+  Cart,
+  Checkout,
+  OrderDetail
 } from '../Screens';
 import MainApp from './MainApp';
 
@@ -20,6 +22,8 @@ const Router = () => {
       <Stack.Screen name="MainApp" component={MainApp} />
       <Stack.Screen name="Cart" component={Cart} />
       <Stack.Screen name="Detail" component={Detail} />
+      <Stack.Screen name="Checkout" component={Checkout} />
+      <Stack.Screen name="OrderDetail" component={OrderDetail} />
     </Stack.Navigator>
   );
 };

@@ -9,10 +9,11 @@ import {
   StatusBar,
   RefreshControl,
   TouchableOpacity,
+  Text,
 } from 'react-native';
 import React, {useEffect, useState, useMemo, useCallback} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-// import Carousel from 'react-native-reanimated-carousel';
+import Carousel from 'react-native-reanimated-carousel';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ms} from 'react-native-size-matters';
 import {
@@ -36,63 +37,52 @@ import {
 import {COLORS} from '../../Utils';
 import {GET_STATUS_ORDER_PRODUCT} from '../../Redux/types';
 import {useIsFocused} from '@react-navigation/native';
-import { BBQ, BrownCreamy, ChickenCheese, WhiteCream } from '../../Assets/Images';
+import { Banner1, Banner2, Banner3, BBQ, BrownCreamy, ChickenCheese, WhiteCream } from '../../Assets/Images';
+import HomeShimmerProduct from '../../Components/Skeleton/HomeShimmerProduct';
 // import { ImageBanner } from '../../../api/url';
 
 const Home = ({navigation}) => {
-  const CATEGORY = [
-    {
-      name: 'All Product',
-      icon: 'feature-search',
-      onclick: () => {
-        onCategory('')
-      },
-    }
-  ];
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-
-  const [currentCategory, setCurrentCategory] = useState('');
   const [isSearch, setIsSearch] = useState('');
-  // const [currentPage, setCurrentPage] = useState(1);
-
 
   const loginUser = useSelector(state => state.appData.loginUser);
 
-  let banner = useSelector(state => state.appData.banner);
+  let banner = [
+    {
+      id:1,
+      image_url:Banner1
+    },
+    {
+      id:2,
+      image_url:Banner2
+    },
+    {
+      id:3,
+      image_url:Banner3
+    }
+  ]
+
   const product = useSelector(state => state.appData.product);
-
-
   const connection = useSelector(state => state.appData.connection);
-  const Carts = useSelector(state => state.appData.Carts);
   const numberCart = useSelector(state => state.appData.numberCart);
-  
+
   banner = banner?.map(({image_url}) => image_url);
 
-
-  const onCategory = (category) =>{
-    setCurrentCategory('');
-    setIsSearch('');
-    // setDefault();
-    // loginUser && dispatch(getWishlist(loginUser.id));
-    // dispatch(getProduct(category, '')).then(() => {
-    //   setLoading(false);
-    // });
-  }
   const onSearch = () => {
     setDefault();
-    // dispatch(getProduct(currentCategory, isSearch)).then(() => {
-    //   setLoading(false);
-    // });
+    dispatch(getProduct(isSearch)).then(() => { 
+      setIsSearch(isSearch);
+      setLoading(false);
+    });
   };
 
   const setDefault = () => {
-    //4setLoading(true);
+    setLoading(true);
     dispatch(clearProduct());
-    //dispatch(getBanner());
   };
 
   const getData = () => {
@@ -100,40 +90,36 @@ const Home = ({navigation}) => {
     setIsSearch('');
     setDefault();
     dispatch(GetNumberCart())
-    dispatch(getProduct()).then(() => {
-      setLoading(false);
-    });
-    // if(loginUser){
-    //   dispatch(getWishlist(loginUser.id));
-    // }
-    // loginUser &&
-    //   dispatch(getStatusOrder(loginUser.access_token)).then(() => {
-    //     setLoading(false);
-    //   });
+    dispatch(clearProduct()).then(()=>{
+      setTimeout(() => {
+        dispatch(getProduct(isSearch)).then(() => { 
+          setLoading(false);
+        });
+      }, 500);
+    })
   };
 
   const onRefresh = useCallback(() => {
-    getData();
+    setLoading(true);
+    dispatch(clearProduct()).then(()=>{
+      setTimeout(() => {
+        dispatch(getProduct()).then(() => { 
+          setLoading(false);
+        });
+      }, 500);
+    })
   }, []);
 
   useEffect(() => {
     setLoading(false);
     if (isFocused) {
       dispatch(connectionChecker()).then(() => {
-        // dispatch(getBanner()).then(()=>{ 
-          getData();
-        // })
+        getData();
       });
     }
     
   }, [connection]);
 
-  useEffect(()=>{
-      console.log("cart",{
-    numberCart:numberCart,
-    Carts:Carts
-  })
-  },[numberCart])
 
   const headerComponent = (
     <View style={styles.Layer}>
@@ -149,55 +135,53 @@ const Home = ({navigation}) => {
             onPress={() =>
               navigation.navigate('Cart')
             }>
-            <Icon name={'cart'} size={ms(30)} color={COLORS.black} />
+            <View>
+              <Icon name={'cart'} size={ms(30)} color={COLORS.black} />
+              {numberCart>0&&
+              <View 
+                style={{
+                  backgroundColor:COLORS.red,width:ms(20),height:ms(20),borderRadius:15,
+                  position:'absolute',
+                  left:ms(15),
+                  bottom:ms(15),
+                  justifyContent:'center',
+                  alignItems:'center'
+                }}>
+                <Text style={{}}>{numberCart}</Text>
+              </View>
+              }
+              
+            </View>
+            
           </TouchableOpacity>
         )}
       </View>
-      {/* <Carousel
+      <Carousel
         loop
         autoPlay={true}
-        autoPlayInterval={5000}
+        autoPlayInterval={2500}
         width={window.width * 0.9}
-        height={ms(120)}
-        mode="parallax"
+        height={ms(135)}
+        mode="stack-horizontal-right"
         modeConfig={{
           parallaxScrollingScale: 0.9,
           parallaxScrollingOffset: 50,
         }}
         data={banner}
-        // renderItem={({item}) => (
-        //   <Image style={styles.Banner} source={{uri:ImageBanner+ item}} />
-        // )}
-      /> */}
-      {/* <View style={styles.CategoryContainer}>
-        <FlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          data={CATEGORY}
-          renderItem={({item}) => (
-            <CategoryButton
-              name={item.name}
-              icon={item.icon}
-              onPress={item.onclick}
-            />
-          )}
-          keyExtractor={item => item.name}
-        />
-      </View> */}
+        renderItem={({item}) => (
+          <Image style={styles.Banner} source={item} />
+        )}
+      />
     </View>
   );
 
   const renderItem = ({item}) => (
-    <ProductCard
+      <ProductCard
       onPress={() => {
         if (loginUser) {
-          // dispatch(
-          //   getSpesificProductBuyer(item.id),
-          // ).then(() => {
             navigation.navigate('Detail', {
               product_id:item.id
             })
-          // });
         } else {
           navigation.navigate('Auth');
         }
@@ -255,7 +239,7 @@ const styles = StyleSheet.create({
   },
   Layer: {
     width: window.width * 1,
-    backgroundColor: 'red',
+    backgroundColor: COLORS.yellow,
     alignItems: 'center',
     borderBottomRightRadius: ms(20),
     borderBottomLeftRadius: ms(20),
@@ -274,7 +258,10 @@ const styles = StyleSheet.create({
   Banner: {
     backgroundColor: COLORS.lightGrey,
     height: ms(120),
-    borderRadius: ms(10),
+    borderRadius: ms(12),
+    width: window.width * 0.9,
+    borderColor:COLORS.white,
+    borderWidth:ms(1.5)
   },
   CategoryContainer: {
     width: window.width * 0.9,

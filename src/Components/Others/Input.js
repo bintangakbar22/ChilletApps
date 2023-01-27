@@ -22,18 +22,19 @@ const Input = ({
   screen,
   onPress,
   numeric,
-  isPassword
+  isPassword,
+  Checkout
 }) => {
   const [isSecureText, setIsSecureText] = useState(secureTextEntry);
   const [isActive, setIsActive] = useState(false);
 
   return (
-    <View style={styles.Container}>
+    <View style={[styles.Container,{alignItems:Checkout?'flex-start':'center'}]}>
       <View
         style={{
           ...styles.Content,
           borderColor: isActive ? COLORS.black : COLORS.grey,
-          width:placeholder=='Search'?window.width * 0.75:window.width * 0.8
+          width:placeholder=='Search'?window.width * 0.75:Checkout?window.width*0.9:window.width*0.8
         }}>
         <Icon style={styles.Icon} name={icon} size={20} color={COLORS.dark} />
         {numeric ?  

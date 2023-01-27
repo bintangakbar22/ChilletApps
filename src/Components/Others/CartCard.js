@@ -13,7 +13,7 @@ import {COLORS, FONTS} from '../../Utils';
 import { useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { URLProduct } from '../../Utils/Url';
-const CartCard = ({data, onPressCart, cart, label,onPressMin,onPressPlus}) => {
+const CartCard = ({data, onPressCart, cart, label,onPressMin,onPressPlus,style,onPress}) => {
   const loginUser = useSelector(state => state.appData.loginUser);
   function TotalPrice(price,qty){
         return Number(price * qty).toLocaleString('en-US');
@@ -22,61 +22,77 @@ const CartCard = ({data, onPressCart, cart, label,onPressMin,onPressPlus}) => {
   return (
   <>
   {data &&
-    <TouchableOpacity style={styles.Card}>
+    <View style={[styles.Card,style]} >
      <View style={{flexDirection:'row'}}>
-      <Image
-        style={styles.Image}
-        source={{uri: URLProduct+ data?.image }}
-      />
+      
+        <Image
+          style={styles.Image}
+          source={{uri: URLProduct+ data?.image }}
+        />
       <View style={{flexDirection:'column',width:window.width*0.5,justifyContent:'center'}}>
-        <Text style={styles.Name} numberOfLines={2}>
-          { data?.name }
-        </Text>
+        <TouchableOpacity onPress={onPress}>
+          <Text style={styles.Name} numberOfLines={2}>
+            { data?.name }
+          </Text>
+        </TouchableOpacity>
+        
         <Text style={styles.Location} numberOfLines={1}>
             { data?.Product?.location}
         </Text>
-        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+        <View style={[styles,{flexDirection:'row',justifyContent:'space-between'}]}>
             <Text style={styles.Price} numberOfLines={1}>
                 {`Rp. ${rupiah( TotalPrice(data.price,data.quantity) )}`}
             </Text>
             {loginUser &&label=='checkout'&&
-            <Text style={[styles.Price,{color:COLORS.grey}]} numberOfLines={1}>
+            <Text style={[styles.Price,{color:COLORS.grey,paddingRight:ms(10)}]} numberOfLines={1}>
               Qty :{data.quantity}
             </Text>
             }
             {loginUser &&label=='cart'? (
                 <>
-                {data.quantity>1&&
-                
                 <TouchableOpacity
-                style={[
-                    styles.AddWishlist,
-                ]}
-                onPress={onPressMin}>
-                <Icon name={'minus-circle-outline'} size={ms(22)} color={COLORS.green} />
+                  style={[
+                      styles.AddWishlist,
+                  ]}
+                  onPress={onPressCart}>
+                  <Icon name={'trash-can-outline'} size={ms(22)} color={COLORS.red} />
+                </TouchableOpacity>
+                {data.quantity>1?
+                <TouchableOpacity
+                  style={[
+                      styles.AddWishlist,
+                  ]}
+                  onPress={onPressMin}>
+                  <Icon name={'minus-circle-outline'} size={ms(22)} color={COLORS.green} />
+                </TouchableOpacity>
+                :
+                <TouchableOpacity
+                  style={[
+                      styles.AddWishlist,
+                  ]}
+                  onPress={onPressMin} disabled>
+                  <Icon name={'minus-circle-outline'} size={ms(22)} color={COLORS.grey} />
                 </TouchableOpacity>
                 }
+                <View style={{padding:ms(10),paddingVertical:ms(1),borderRadius:ms(8),borderWidth:ms(0.5),borderColor:COLORS.grey}}>
+                  <Text style={[styles.Price,{fontSize:ms(13)}]} >{data.quantity}</Text>
+                </View>
+                  
                 <TouchableOpacity
-                style={[
-                    styles.AddWishlist,
-                ]}
-                onPress={onPressPlus}>
-                <Icon name={'plus-circle-outline'} size={ms(22)} color={COLORS.primaryBlue} />
+                  style={[
+                      styles.AddWishlist,
+                  ]}
+                  onPress={onPressPlus}>
+                  <Icon name={'plus-circle-outline'} size={ms(22)} color={COLORS.primaryBlue} />
                 </TouchableOpacity>
-                <TouchableOpacity
-                style={[
-                    styles.AddWishlist,
-                ]}
-                onPress={onPressCart}>
-                <Icon name={'trash-can-outline'} size={ms(22)} color={COLORS.red} />
-                </TouchableOpacity>
+                
                 </>
             ) : null}
         </View>
         
       </View>
      </View>
-    </TouchableOpacity>
+    </View>
     }
   </>
   );

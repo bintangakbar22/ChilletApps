@@ -18,6 +18,7 @@ import DaftarJualShimmer from './Skeleton/DaftarJualShimmer';
 import WishlistShimmer from './Skeleton/WishlistShimmer';
 import Blank from './Others/Blank';
 import CartCard from './Others/CartCard';
+import OrderList from './Orders/OrderList';
 export {
   AuthHeader,
   LoginForm,
@@ -38,5 +39,6 @@ export {
   DaftarJualShimmer,
   WishlistShimmer,
   Blank,
-  CartCard
+  CartCard,
+  OrderList
 };

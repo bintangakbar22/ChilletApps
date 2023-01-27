@@ -26,9 +26,9 @@ const LoginForm = ({connection}) => {
     dispatch(fetchingLogin(values));
   }, []);
 
-  // useMemo(() => {
-  //   loginUser && navigation.navigate('MainApp');
-  // }, [loginUser]);
+  useMemo(() => {
+    loginUser && navigation.navigate('MainApp');
+  }, [loginUser]);
 
   return (
     <Formik
@@ -56,7 +56,7 @@ const LoginForm = ({connection}) => {
             isPassword={true}
           />
           <Button
-           // disabled={connection ? false : true}
+            disabled={connection ? false : true}
             caption={'Login'}
             onPress={handleSubmit}
           />

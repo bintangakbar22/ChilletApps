@@ -15,16 +15,14 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   DecreaseQuantity,
   IncreaseQuantity,
-  // getCart,
-  // removeCart,
   rupiah,
-  // updateCart,
   DeleteCart,
-  GetNumberCart
+  GetNumberCart,
+  InputQuantity
 } from '../../Redux/actions';
 import {COLORS} from '../../Utils';
 import {ms} from 'react-native-size-matters';
-import {Button, CartCard, Header, WishlistShimmer} from '../../Components';
+import {Button, CartCard, Header} from '../../Components';
 import {useIsFocused} from '@react-navigation/native';
 import { FONTS } from '../../Utils';
 import CartShimmer from '../../Components/Skeleton/CartShimmer';
@@ -38,6 +36,7 @@ const Cart = ({navigation}) => {
   
   const connection = useSelector(state => state.appData.connection);
   const loginUser = useSelector(state => state.appData.loginUser);
+  const userData = useSelector(state => state.appData.userData);
   const cart = useSelector(state => state.appData.Carts);
   const finalPrice = cart.map(i=>i.price*i.quantity).reduce((a, b) => a + b, 0)
   const idProduct = cart.map(i=>i.id)
@@ -60,6 +59,7 @@ const Cart = ({navigation}) => {
   const handleMin = useCallback(id => {
     dispatch(DecreaseQuantity(id)).then(getData());
   }, []);
+
 
   useState(() => {
     if (isFocused) {
@@ -84,6 +84,11 @@ const Cart = ({navigation}) => {
       onPressCart={() => handleRemove(index)}
       onPressMin={() => handleMin(index)}
       onPressPlus={() => handlePlus(index)}
+      onPress={()=>{
+        navigation.navigate('Detail', {
+          product_id:item.id
+        })
+      }}
     />
   );
 

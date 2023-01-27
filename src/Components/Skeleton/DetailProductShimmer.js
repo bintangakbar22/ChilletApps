@@ -12,7 +12,7 @@ const DetailProductShimmer = () => {
         <View
           style={{
             width: window.width * 1,
-            height: ms(250),
+            height: ms(400),
             backgroundColor: '#000',
           }}
         />
@@ -46,16 +46,6 @@ const DetailProductShimmer = () => {
             />
           ))}
         </View>
-        <View
-          style={{
-            width: ms(300),
-            height: ms(60),
-            alignSelf: 'center',
-            marginTop: ms(20),
-
-            borderRadius: ms(10),
-          }}
-        />
       </SkeletonPlaceholder>
     </ScrollView>
   );

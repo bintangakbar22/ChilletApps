@@ -32,12 +32,10 @@ const Account = () => {
   const userData = useSelector(state => state.appData.userData);
   useEffect(() => {
     if (isFocused) {
-      dispatch(connectionChecker());
-      loginUser
-        ? dispatch(getUserData(loginUser?.access_token)).then(() =>
-            setLoading(false),
-          )
-        : setLoading(false);
+      dispatch(connectionChecker()).then(()=>{
+        setLoading(false)
+      })
+    
     }
   }, [connection, loginUser]);
 
@@ -70,13 +68,7 @@ const Account = () => {
                   shadowColor={COLORS.black}
                  // onPress={() => navigation.navigate('EditAccount')}
                   icon={'account-edit-outline'}
-                  caption={'Edit Account'}
-                />
-                <ButtonShadow
-                  shadowColor={COLORS.black}
-                  //onPress={() => navigation.navigate('EditPassword')}
-                  icon={'lock-reset'}
-                  caption={'Edit Password'}
+                  caption={'About'}
                 />
                 <ButtonShadow
                   shadowColor={COLORS.red}
@@ -94,7 +86,6 @@ const Account = () => {
                   shadowColor={COLORS.black}
                   onPress={() => {
                     navigation.navigate('Auth');
-                    dispatch(goLogout());
                   }}
                   icon={'login-variant'}
                   caption={'Login or Register'}

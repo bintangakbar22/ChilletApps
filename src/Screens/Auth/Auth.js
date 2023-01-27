@@ -30,7 +30,7 @@ const Auth = () => {
     dispatch(authScreen('Login'));
     if (loginUser) {
       navigation.replace('MainApp');
-      dispatch(getUserData(loginUser.access_token));
+      
     }
   }, [loginUser]);
 

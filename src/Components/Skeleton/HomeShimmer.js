@@ -38,29 +38,6 @@ const HomeShimmer = () => {
               borderRadius: ms(10),
             }}
           />
-          <View
-            style={{
-              width: window.width * 0.9,
-              flexDirection: 'row',
-              marginTop: ms(10),
-            }}>
-            <View
-              style={{
-                width: ms(150),
-                height: ms(40),
-                marginHorizontal: ms(5),
-                borderRadius: ms(10),
-              }}
-            />
-            <View
-              style={{
-                width: ms(150),
-                height: ms(40),
-                marginHorizontal: ms(5),
-                borderRadius: ms(10),
-              }}
-            />
-          </View>
         </View>
         <View style={{alignItems: 'center'}}>
           {[1, 2, 3, 4, 5].map(() => (
