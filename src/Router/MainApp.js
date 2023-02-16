@@ -5,22 +5,23 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icons from 'react-native-vector-icons/Ionicons';
 import {ms} from 'react-native-size-matters';
 import { useSelector} from 'react-redux';
-import {Home, Splash} from '../Screens';
+import {Home, Splash,Account, Cart, Orders} from '../Screens';
 import {COLORS} from '../Utils/Colors';
 import Toast from 'react-native-toast-message';
-import { AppBar, IconButton, FAB } from "@react-native-material/core";
 const Tab = createBottomTabNavigator();
 
 const MainApp = () => {
   const loginUser = useSelector(state => state.appData.loginUser);
-  const userType = useSelector(state => state.appData.userType);
 
   const handleNotLogin = ({navigation}) => ({
     tabPress: e => {
       if (!loginUser) {
         e.preventDefault();
         navigation.navigate('Auth');
-        
+        Toast.show({
+            type: 'error',
+            text1: 'Please Login Or Register!',
+        })
       }
     },
   });
@@ -39,24 +40,15 @@ const MainApp = () => {
             return <Icon name={'bell-outline'} size={ms(22)} color={color} />;
           } else if (route.name === 'Jual') {
             return <Icon name={'plus-circle-outline'} size={ms(22)} color={color} />;
-          } else if (route.name === 'DaftarJual') {
+          } else if (route.name === 'Orders') {
             return <Icon name={'view-list-outline'} size={ms(22)} color={color} />;
           } else if (route.name === 'Akun') {
             return <Icon name={'account-outline'} size={ms(27)} color={color} />;
           } else if (route.name === 'Cart') {
-            return <FAB
-                      icon={props => <Icons name="cart-outline" {...props} size={ms(25)} color={'black'} />}
-                      color='yellow'
-                      style={{
-                        position: 'absolute', 
-                        alignSelf: 'center', 
-                        bottom: 25, 
-                      }}
-                      />;
+            return <Icon name={'cart'} size={ms(22)} color={color} />;  
           } else if (route.name === 'Transaksi') {
             return <Icon name={'notebook-outline'} size={ms(22)} color={color} />;
           } 
-          
         },
         tabBarActiveTintColor: COLORS.white,
         tabBarInactiveTintColor: COLORS.grey,
@@ -74,14 +66,13 @@ const MainApp = () => {
           marginHorizontal: ms(10),
           alignSelf:'center',
         },
-        tabBarActiveBackgroundColor:COLORS.black
+        tabBarActiveBackgroundColor:COLORS.black,
+        
       })}>
 
-        <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Notifikasi" component={Home} />
-        <Tab.Screen name="Cart" component={Home} />
-        <Tab.Screen name="DaftarJual" component={Home} />
-        <Tab.Screen name="Akun" component={Home} />
+        <Tab.Screen name="Home" component={Home}   />
+        <Tab.Screen name="Orders" component={Orders}  listeners={handleNotLogin}  />
+        <Tab.Screen name="Akun" component={Account} listeners={handleNotLogin}  />
 
     </Tab.Navigator>
   );

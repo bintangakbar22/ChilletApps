@@ -10,47 +10,24 @@ import React from 'react';
 import {ms} from 'react-native-size-matters';
 import {rupiah} from '../../Redux/actions';
 import {COLORS, FONTS} from '../../Utils';
-import { useSelector } from 'react-redux';
-const Product = ({data, onPress, onPressWishlist, wishlist, label}) => {
-  const wishlistButton = wishlist?.filter(i => i.product_id == data.id);
-  const loginUser = useSelector(state => state.appData.loginUser);
+import { URLProduct } from '../../Utils/Url';
+const Product = ({data, onPress,  label}) => {
   return (
   <>
   {data &&
     <TouchableOpacity style={styles.Card} onPress={onPress}>
       <Image
         style={styles.Image}
+        source={{uri:URLProduct+ data.image}}
       />
-      <Text style={styles.Location} numberOfLines={1}>
-        {label ? data?.Product?.location : data?.location}
-      </Text>
-      <View style={{flexDirection:'row',width:window.width*0.38,justifyContent:'center',height:ms(70)}}>
-        <Text style={styles.Name} numberOfLines={3}>
-          {label ? data?.Product?.name : data?.name}
+      <View style={{flexDirection:'row',width:window.width*0.38,justifyContent:'center',height:ms(50)}}>
+        <Text style={styles.Name} numberOfLines={2}>
+         {data?.name}
         </Text>
       </View>
       <Text style={styles.Price} numberOfLines={1}>
-        {`Rp. ${rupiah(label ? data?.Product?.base_price : data?.base_price)}`}
+        {`Rp. ${rupiah(data.price)}`}
       </Text>
-      {loginUser&&wishlist || label ? (
-        <TouchableOpacity
-          disabled={label ? false : wishlistButton?.length ? true : false}
-          style={[
-            {
-              backgroundColor: label
-                ? COLORS.red
-                : wishlistButton?.length
-                ? COLORS.dark
-                : COLORS.grey,
-            },
-            styles.AddWishlist,
-          ]}
-          onPress={onPressWishlist}>
-          <Text style={styles.Wishlist}>
-            {label ? 'Remove' : 'Add to Wishlist'}
-          </Text>
-        </TouchableOpacity>
-      ) : null}
     </TouchableOpacity>
     }
   </>
@@ -65,8 +42,6 @@ const styles = StyleSheet.create({
     width: window.width * 0.4,
     alignItems: 'center',
     margin: ms(10),
-    padding: ms(10),
-
     borderRadius: ms(10),
     elevation: ms(2),
     shadowColor: COLORS.black,
@@ -80,9 +55,8 @@ const styles = StyleSheet.create({
   Image: {
     backgroundColor: COLORS.lightGrey,
     resizeMode: 'cover',
-    width: ms(130),
-    height: ms(90),
-
+    width:window.width * 0.4,
+    height: ms(200),
     borderRadius: ms(10),
     marginBottom: ms(10),
   },
@@ -93,16 +67,16 @@ const styles = StyleSheet.create({
   },
   Name: {
     fontFamily: FONTS.Bold,
-    fontSize: ms(14),
+    fontSize: ms(16),
     color: COLORS.dark,
     alignSelf:'center',
-    marginTop: ms(6),
     textAlign:'center'
   },
   Price: {
     fontFamily: FONTS.SemiBold,
     fontSize: ms(12),
     color: COLORS.dark,
+    paddingBottom:ms(10)
   },
   AddWishlist: {
     alignItems: 'center',

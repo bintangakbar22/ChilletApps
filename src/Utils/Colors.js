@@ -9,5 +9,6 @@ export const COLORS = {
   lightGrey: '#DFE9EF',
   socialMedia: '#1a3834',
   disabled: '#d0d0d0',
-  primaryBlue: '#000080'
+  primaryBlue: '#000080',
+  yellow:'#F7DD04'
 };

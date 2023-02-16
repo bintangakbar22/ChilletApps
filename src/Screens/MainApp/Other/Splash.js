@@ -1,19 +1,20 @@
-import {View, Image, StatusBar, StyleSheet} from 'react-native';
+import {View, Image, StatusBar, StyleSheet, ImageBackground} from 'react-native';
 import React, {useEffect} from 'react';
 import {ms} from 'react-native-size-matters';
 import {COLORS} from '../../../Utils/Colors';
+import { ChilletRound, Pattern } from '../../../Assets';
 
 const Splash = ({navigation}) => {
   useEffect(() => {
     setTimeout(() => {
       navigation.replace('MainApp');
-    }, 500);
+    }, 1500);
   }, []);
 
   return (
-    <View style={styles.Container}>
-      <Image style={styles.Image}  />
-    </View>
+    <ImageBackground style={styles.Container} source={Pattern}>
+      <Image style={styles.Image} source={ChilletRound} />
+    </ImageBackground>
   );
 };
 
@@ -22,12 +23,12 @@ export default Splash;
 const styles = StyleSheet.create({
   Container: {
     flex: 1,
-    backgroundColor: COLORS.black,
+    backgroundColor: COLORS.red,
     alignItems: 'center',
     justifyContent: 'center',
   },
   Image: {
-    width: ms(360),
-    height: ms(360),
+    width: ms(220),
+    height: ms(220),
   },
 });

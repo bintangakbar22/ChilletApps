@@ -1,11 +1,24 @@
 import React from 'react';
 import {Text, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import { ms } from 'react-native-size-matters';
 import {COLORS} from '../../Utils/Colors';
 import {FONTS} from '../../Utils/Fonts';
-
-const Button = ({caption, onPress,disabled,style,styleText}) => {
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+const Button = ({caption, onPress,disabled,style,styleText,whatsApp}) => {
   return (
-    <TouchableOpacity style={[styles.Container,{width:caption=="Preview"||caption=="Posting"?window.width * 0.75:window.width * 0.75,marginHorizontal:5,backgroundColor:caption=="Delete"?"#871f1b":'#666666'},style]} onPress={onPress} disabled={disabled}>
+    <TouchableOpacity 
+      style={
+        [styles.Container,
+        {width:caption=="Preview"||
+          caption=="Posting"?
+          window.width * 0.75:window.width * 0.75,
+          marginHorizontal:5,
+          backgroundColor:COLORS.red},style]} 
+          onPress={onPress} 
+          disabled={disabled}>
+      {whatsApp &&
+        <Icon name={'whatsapp'} size={ms(30)} color={COLORS.white} />
+      }
       <Text style={[styles.Text,styleText]}>{caption}</Text>
     </TouchableOpacity>
   );
@@ -22,10 +35,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: 15,
     marginTop: 10,
+    flexDirection:'row'
   },
   Text: {
     fontFamily: FONTS.Bold,
-    fontSize: 15,
+    fontSize: ms(16),
     color: COLORS.white,
   },
 });

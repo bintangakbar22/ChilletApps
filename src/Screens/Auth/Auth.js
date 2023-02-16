@@ -30,7 +30,7 @@ const Auth = () => {
     dispatch(authScreen('Login'));
     if (loginUser) {
       navigation.replace('MainApp');
-      dispatch(getUserData(loginUser.access_token));
+      
     }
   }, [loginUser]);
 
@@ -39,8 +39,13 @@ const Auth = () => {
       <StatusBar backgroundColor={'transparent'} translucent />
       <ImageBackground source={Pattern} style={styles.ImageBackground} />
       <ScrollView contentContainerStyle={styles.Box}>
-        <View style={styles.qiuqiusply}>
-          <Image source={qiuqiusplyLogo} style={styles.ImageLogo} />
+       <View style={styles.SoloAluminium}>
+          <Text style={[styles.ImageSoloAluminium, {color: COLORS.red,paddingRight:ms(15)}]}>
+            Chillet 
+          </Text>
+          <Text style={[styles.ImageSoloAluminium, {color: COLORS.black}]}>
+            Apps
+          </Text>
         </View>
         <View style={styles.Card}>
           <View style={styles.Header}>
@@ -60,7 +65,7 @@ const Auth = () => {
 
 export default Auth;
 
-const window = Dimensions.get('window');
+const window = Dimensions.get('screen');
 const styles = StyleSheet.create({
   Container: {
     flex: 1,
@@ -70,12 +75,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: window.width * 1,
     height: window.height * 1,
-    backgroundColor:COLORS.black
+    backgroundColor:COLORS.yellow
   },
   Box: {
     flexGrow: 1,
     justifyContent: 'center',
-
     paddingVertical: ms(75),
   },
   qiuqiusply: {
@@ -89,26 +93,29 @@ const styles = StyleSheet.create({
     height: ms(100),
     marginRight: ms(10),
   },
-  Imageqiuqiusply: {
+SoloAluminium: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: ms(25),
+  },
+  ImageSoloAluminium: {
     fontFamily: FONTS.Regular,
-    fontSize: ms(30),
+    fontSize: ms(35),
     fontWeight: '700',
     color: COLORS.white,
   },
   Card: {
     backgroundColor: COLORS.white,
-
     width: window.width * 0.9,
     alignSelf: 'center',
     borderRadius: ms(15),
-
     paddingVertical: ms(25),
   },
   Header: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-
     marginBottom: ms(25),
   },
 });
