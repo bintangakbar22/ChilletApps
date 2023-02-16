@@ -22,9 +22,10 @@ const HomeShimmer = () => {
               justifyContent: 'center',
               marginBottom: ms(15),
             }}>
+            <View style={{width: ms(30), height: ms(30), marginRight: ms(15)}} />
             <View
               style={{
-                width: window.width * 0.8,
+                width: window.width * 0.7,
                 height: ms(45),
                 borderRadius: ms(10),
               }}
@@ -45,7 +46,7 @@ const HomeShimmer = () => {
               <View
                 style={{
                   width: window.width * 0.4,
-                  height: ms(240),
+                  height: ms(290),
                   alignItems: 'center',
                   margin: ms(10),
                   borderRadius: ms(10),
@@ -54,7 +55,7 @@ const HomeShimmer = () => {
               <View
                 style={{
                   width: window.width * 0.4,
-                  height: ms(240),
+                  height: ms(290),
                   alignItems: 'center',
                   margin: ms(10),
                   padding: ms(10),

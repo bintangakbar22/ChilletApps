@@ -165,9 +165,16 @@ const OrderDetail = ({route}) => {
                         <View style={{width:window.width*0.7}} >
                          <Text style={[styles.textBlack]}>{item.products.name}</Text>
                         </View>
-                        <Text style={styles.textBlack}>{`Rp. ${rupiah(
-                            item.price,
-                        )}`}</Text>
+                        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                          <Text style={styles.textBlack}>{`Rp. ${rupiah(
+                              item.price,
+                          )}`} x {item.quantity}</Text>
+                          <Text style={styles.textBlack}>{`Rp. ${rupiah(
+                              item.price*item.quantity,
+                          )}`}</Text>
+                        </View>
+                        
+                        
                         </View>
                     </View>
                  );

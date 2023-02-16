@@ -124,19 +124,27 @@ const Home = ({navigation}) => {
   const headerComponent = (
     <View style={styles.Layer}>
       <View style={styles.Headers}>
+        <TouchableOpacity
+          style={[styles.Wishlist,{marginHorizontal:ms(8),marginLeft:ms(0)}]}
+          onPress={() =>
+            navigation.navigate('About')
+          }>
+          <View>
+            <Icon name={'frequently-asked-questions'} size={ms(30)} color={COLORS.white} />
+          </View>
+        </TouchableOpacity>
         <Input
           placeholder="Search"
           onChangeText={val => setIsSearch(val)}
           onPress={() => onSearch()}
         />
-         {loginUser&&(
           <TouchableOpacity
             style={styles.Wishlist}
             onPress={() =>
               navigation.navigate('Cart')
             }>
             <View>
-              <Icon name={'cart'} size={ms(30)} color={COLORS.black} />
+              <Icon name={'cart'} size={ms(30)} color={COLORS.white} />
               {numberCart>0&&
               <View 
                 style={{
@@ -150,11 +158,9 @@ const Home = ({navigation}) => {
                 <Text style={{}}>{numberCart}</Text>
               </View>
               }
-              
             </View>
-            
           </TouchableOpacity>
-        )}
+        {/* )} */}
       </View>
       <Carousel
         loop
@@ -178,13 +184,9 @@ const Home = ({navigation}) => {
   const renderItem = ({item}) => (
       <ProductCard
       onPress={() => {
-        if (loginUser) {
-            navigation.navigate('Detail', {
-              product_id:item.id
-            })
-        } else {
-          navigation.navigate('Auth');
-        }
+        navigation.navigate('Detail', {
+          product_id:item.id
+        })
       }}
       data={item}
     />
@@ -253,7 +255,7 @@ const styles = StyleSheet.create({
   },
   Wishlist: {
     marginBottom: ms(20),
-    marginLeft: ms(15),
+    marginLeft: ms(5),
   },
   Banner: {
     backgroundColor: COLORS.lightGrey,

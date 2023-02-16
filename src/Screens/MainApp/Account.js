@@ -65,9 +65,11 @@ const Account = () => {
                   {userData.name}
                 </Text>
                 <ButtonShadow
-                  shadowColor={COLORS.black}
-                 // onPress={() => navigation.navigate('EditAccount')}
-                  icon={'account-edit-outline'}
+                  shadowColor={COLORS.yellow}
+                  onPress={() => {
+                    navigation.navigate('About');
+                  }}
+                  icon={'frequently-asked-questions'}
                   caption={'About'}
                 />
                 <ButtonShadow
@@ -115,7 +117,7 @@ const styles = StyleSheet.create({
     paddingBottom: ms(25),
   },
   Header: {
-    backgroundColor: 'red',
+    backgroundColor: COLORS.red,
     width: ms(350),
     height: ms(175),
     justifyContent: 'flex-end',

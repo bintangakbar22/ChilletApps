@@ -48,7 +48,7 @@ const CartCard = ({data, onPressCart, cart, label,onPressMin,onPressPlus,style,o
               Qty :{data.quantity}
             </Text>
             }
-            {loginUser &&label=='cart'? (
+            {label=='cart'? (
                 <>
                 <TouchableOpacity
                   style={[

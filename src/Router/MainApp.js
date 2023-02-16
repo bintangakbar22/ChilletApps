@@ -7,6 +7,7 @@ import {ms} from 'react-native-size-matters';
 import { useSelector} from 'react-redux';
 import {Home, Splash,Account, Cart, Orders} from '../Screens';
 import {COLORS} from '../Utils/Colors';
+import Toast from 'react-native-toast-message';
 const Tab = createBottomTabNavigator();
 
 const MainApp = () => {
@@ -17,7 +18,10 @@ const MainApp = () => {
       if (!loginUser) {
         e.preventDefault();
         navigation.navigate('Auth');
-        
+        Toast.show({
+            type: 'error',
+            text1: 'Please Login Or Register!',
+        })
       }
     },
   });
@@ -66,8 +70,8 @@ const MainApp = () => {
         
       })}>
 
-        <Tab.Screen name="Home" component={Home} listeners={handleNotLogin}  />
-        <Tab.Screen name="Orders" component={Orders} listeners={handleNotLogin}  />
+        <Tab.Screen name="Home" component={Home}   />
+        <Tab.Screen name="Orders" component={Orders}  listeners={handleNotLogin}  />
         <Tab.Screen name="Akun" component={Account} listeners={handleNotLogin}  />
 
     </Tab.Navigator>

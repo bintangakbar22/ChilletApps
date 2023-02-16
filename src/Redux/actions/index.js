@@ -236,11 +236,10 @@ export const saveAddress = (address) =>{
     })
 }}
 
-export const GetNumberCart = (product) =>{
+export const GetNumberCart = () =>{
   return async dispatch => {
     await dispatch( {
         type:"GET_NUMBER_CART",
-        payload:product
     })
 }}
 

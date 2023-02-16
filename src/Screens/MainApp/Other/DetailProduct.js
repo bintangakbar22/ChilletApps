@@ -55,11 +55,7 @@ const Detail = ({route}) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const addtoCart = (prod) =>{
-    const product = {
-      ...prod,
-      user_id:userData.id
-    }
-    dispatch(AddCart(product))
+    dispatch(AddCart(prod))
       .then(()=>{
         dispatch(getSpesificProductBuyer(product_id))
       })

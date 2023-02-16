@@ -27,6 +27,7 @@ import {useIsFocused} from '@react-navigation/native';
 import { FONTS } from '../../Utils';
 import CartShimmer from '../../Components/Skeleton/CartShimmer';
 import {Blank} from '../../Components';
+import Toast from 'react-native-toast-message';
 
 const Cart = ({navigation}) => {
   const dispatch = useDispatch();
@@ -43,7 +44,7 @@ const Cart = ({navigation}) => {
 
   const getData = () => {
     setLoading(true)
-    dispatch(GetNumberCart(loginUser.id)).then(() =>
+    dispatch(GetNumberCart()).then(() =>
       setLoading(false),
     );
   };
@@ -68,14 +69,21 @@ const Cart = ({navigation}) => {
   }, []);
 
   const goBuy = () =>{
-    navigation.navigate("Checkout",
-      {
+    if(loginUser){
+      navigation.navigate("Checkout",{
         idBuyer:loginUser.id,
         idProduct:idProduct,
         finalPrice:finalPrice,
         cart:cart
-      }
-    )
+      })
+    }else{
+      navigation.navigate('Auth');
+        Toast.show({
+            type: 'error',
+            text1: 'Please Login Or Register!',
+        })
+    }
+    
   }
   const renderItem = ({item,index}) => (
     <CartCard

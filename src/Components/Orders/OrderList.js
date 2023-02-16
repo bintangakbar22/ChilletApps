@@ -38,7 +38,7 @@ const OrderList = ({data,type}) => {
                     dataRoute: item,
                   })
                 }}
-                key={item.id}
+                key={key}
                 style={styles.card}>
                 <View>
                   <View
