@@ -1,11 +1,10 @@
 import React from 'react';
-import {Platform,Dimensions} from 'react-native';
+import {Platform} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Icons from 'react-native-vector-icons/Ionicons';
 import {ms} from 'react-native-size-matters';
-import { useSelector} from 'react-redux';
-import {Home, Splash,Account, Cart, Orders} from '../Screens';
+import {useSelector} from 'react-redux';
+import {Home, Account, Orders} from '../Screens';
 import {COLORS} from '../Utils/Colors';
 import Toast from 'react-native-toast-message';
 const Tab = createBottomTabNavigator();
@@ -19,9 +18,9 @@ const MainApp = () => {
         e.preventDefault();
         navigation.navigate('Auth');
         Toast.show({
-            type: 'error',
-            text1: 'Please Login Or Register!',
-        })
+          type: 'error',
+          text1: 'Please Login Or Register!',
+        });
       }
     },
   });
@@ -33,22 +32,29 @@ const MainApp = () => {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarIcon: ({color}) => {
-          let iconName;
           if (route.name === 'Home') {
             return <Icon name={'home-outline'} size={ms(27)} color={color} />;
           } else if (route.name === 'Notifikasi') {
             return <Icon name={'bell-outline'} size={ms(22)} color={color} />;
           } else if (route.name === 'Jual') {
-            return <Icon name={'plus-circle-outline'} size={ms(22)} color={color} />;
+            return (
+              <Icon name={'plus-circle-outline'} size={ms(22)} color={color} />
+            );
           } else if (route.name === 'Orders') {
-            return <Icon name={'view-list-outline'} size={ms(22)} color={color} />;
+            return (
+              <Icon name={'view-list-outline'} size={ms(22)} color={color} />
+            );
           } else if (route.name === 'Akun') {
-            return <Icon name={'account-outline'} size={ms(27)} color={color} />;
+            return (
+              <Icon name={'account-outline'} size={ms(27)} color={color} />
+            );
           } else if (route.name === 'Cart') {
-            return <Icon name={'cart'} size={ms(22)} color={color} />;  
+            return <Icon name={'cart'} size={ms(22)} color={color} />;
           } else if (route.name === 'Transaksi') {
-            return <Icon name={'notebook-outline'} size={ms(22)} color={color} />;
-          } 
+            return (
+              <Icon name={'notebook-outline'} size={ms(22)} color={color} />
+            );
+          }
         },
         tabBarActiveTintColor: COLORS.white,
         tabBarInactiveTintColor: COLORS.grey,
@@ -64,19 +70,15 @@ const MainApp = () => {
         tabBarItemStyle: {
           height: ms(40),
           marginHorizontal: ms(10),
-          alignSelf:'center',
+          alignSelf: 'center',
         },
-        tabBarActiveBackgroundColor:COLORS.black,
-        
+        tabBarActiveBackgroundColor: COLORS.black,
       })}>
-
-        <Tab.Screen name="Home" component={Home}   />
-        <Tab.Screen name="Orders" component={Orders}  listeners={handleNotLogin}  />
-        <Tab.Screen name="Akun" component={Account} listeners={handleNotLogin}  />
-
+      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Orders" component={Orders} listeners={handleNotLogin} />
+      <Tab.Screen name="Akun" component={Account} listeners={handleNotLogin} />
     </Tab.Navigator>
   );
 };
 
 export default MainApp;
-const window = Dimensions.get('window');

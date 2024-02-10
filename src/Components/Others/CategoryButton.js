@@ -4,9 +4,9 @@ import {ms} from 'react-native-size-matters';
 import {COLORS, FONTS} from '../../Utils';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const CategoryButton = ({name, icon,onPress,style}) => {
+const CategoryButton = ({name, icon, onPress, style}) => {
   return (
-    <TouchableOpacity style={[styles.Container,style]} onPress={onPress}>
+    <TouchableOpacity style={[styles.Container, style]} onPress={onPress}>
       <Icon name={icon} size={20} style={styles.Icon} />
       <Text style={styles.Name}>{name}</Text>
     </TouchableOpacity>

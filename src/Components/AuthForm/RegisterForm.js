@@ -1,6 +1,6 @@
 import {View} from 'react-native';
-import React, {useCallback,useState} from 'react';
-import {useDispatch,useSelector} from 'react-redux';
+import React, {useState} from 'react';
+import {useDispatch} from 'react-redux';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import {fetchingRegister} from '../../Redux/actions';
@@ -12,9 +12,8 @@ import ImageShow from '../Others/ImageShow';
 const RegisterForm = ({label, connection}) => {
   const dispatch = useDispatch();
 
-  const [ImageSource,setImageSource] = useState(null)
-  const [dataImage,setDataImage] = useState(null)
-  const userData = useSelector(state => state.appData.userData);
+  const [ImageSource, setImageSource] = useState(null);
+  const [dataImage, setDataImage] = useState(null);
 
   const dataValidation = yup.object().shape({
     name: yup.string().required('Name is Required!'),
@@ -49,51 +48,41 @@ const RegisterForm = ({label, connection}) => {
     const options = {
       quality: 1.0,
       maxWidth: 500,
-      maxHeight: 500
+      maxHeight: 500,
     };
-    ImagePicker.launchImageLibrary(options, (response) => {
- 
+    ImagePicker.launchImageLibrary(options, response => {
       if (response.didCancel) {
         console.log('User cancelled photo picker');
-      }
-      else if (response.error) {
+      } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
-      }
-      else if (response.customButton) {
+      } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
-      }
-      else {
-        setImageSource(response.uri)
-        setDataImage(response.data)
+      } else {
+        setImageSource(response.uri);
+        setDataImage(response.data);
       }
     });
   };
 
-
-  const goRegister = (values) => {
-    dispatch(fetchingRegister(values,dataImage));
+  const goRegister = values => {
+    dispatch(fetchingRegister(values, dataImage));
   };
 
   return (
     <Formik
-      initialValues={
-        {
-              name: '',
-              email: '',
-              password: '',
-              password_confirmation: '',
-              showPassword: true,
-              showPassword2: true,
-        }
-      }
+      initialValues={{
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+        showPassword: true,
+        showPassword2: true,
+      }}
       validationSchema={dataValidation}
-      onSubmit={values =>  goRegister(values)}>
+      onSubmit={values => goRegister(values)}>
       {({handleChange, handleBlur, handleSubmit, values, errors}) => (
         <View>
-            <ImageShow
-                onPress={imagePicker}
-                uri={ImageSource}
-            />
+          <ImageShow onPress={imagePicker} uri={ImageSource} />
           <Input
             icon={'account-outline'}
             onChangeText={handleChange('name')}
@@ -111,24 +100,24 @@ const RegisterForm = ({label, connection}) => {
             error={errors.email}
           />
           <Input
-              icon={'lock-outline'}
-              onChangeText={handleChange('password')}
-              onBlur={handleBlur('password')}
-              value={values.password}
-              placeholder={'Password'}
-              error={errors.password}
-              secureTextEntry={true}
-              isPassword={true}
+            icon={'lock-outline'}
+            onChangeText={handleChange('password')}
+            onBlur={handleBlur('password')}
+            value={values.password}
+            placeholder={'Password'}
+            error={errors.password}
+            secureTextEntry={true}
+            isPassword={true}
           />
           <Input
-              icon={'lock-outline'}
-              onChangeText={handleChange('password_confirmation')}
-              onBlur={handleBlur('password_confirmation')}
-              value={values.password_confirmation}
-              placeholder={'Confirm Password'}
-              error={errors.password_confirmation}
-              secureTextEntry={true}
-              isPassword={true}
+            icon={'lock-outline'}
+            onChangeText={handleChange('password_confirmation')}
+            onBlur={handleBlur('password_confirmation')}
+            value={values.password_confirmation}
+            placeholder={'Confirm Password'}
+            error={errors.password_confirmation}
+            secureTextEntry={true}
+            isPassword={true}
           />
           <Button
             disabled={connection ? false : true}

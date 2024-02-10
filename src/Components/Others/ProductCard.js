@@ -4,33 +4,37 @@ import {
   Image,
   StyleSheet,
   Dimensions,
-  View
+  View,
 } from 'react-native';
 import React from 'react';
 import {ms} from 'react-native-size-matters';
 import {rupiah} from '../../Redux/actions';
 import {COLORS, FONTS} from '../../Utils';
-import { URLProduct } from '../../Utils/Url';
-const Product = ({data, onPress,  label}) => {
+import {URLProduct} from '../../Utils/Url';
+
+const Product = ({data, onPress, label}) => {
   return (
-  <>
-  {data &&
-    <TouchableOpacity style={styles.Card} onPress={onPress}>
-      <Image
-        style={styles.Image}
-        source={{uri:URLProduct+ data.image}}
-      />
-      <View style={{flexDirection:'row',width:window.width*0.38,justifyContent:'center',height:ms(50)}}>
-        <Text style={styles.Name} numberOfLines={2}>
-         {data?.name}
-        </Text>
-      </View>
-      <Text style={styles.Price} numberOfLines={1}>
-        {`Rp. ${rupiah(data.price)}`}
-      </Text>
-    </TouchableOpacity>
-    }
-  </>
+    <>
+      {data && (
+        <TouchableOpacity style={styles.Card} onPress={onPress}>
+          <Image style={styles.Image} source={{uri: URLProduct + data.image}} />
+          <View
+            style={{
+              flexDirection: 'row',
+              width: window.width * 0.38,
+              justifyContent: 'center',
+              height: ms(50),
+            }}>
+            <Text style={styles.Name} numberOfLines={2}>
+              {data?.name}
+            </Text>
+          </View>
+          <Text style={styles.Price} numberOfLines={1}>
+            {`Rp. ${rupiah(data.price)}`}
+          </Text>
+        </TouchableOpacity>
+      )}
+    </>
   );
 };
 
@@ -55,7 +59,7 @@ const styles = StyleSheet.create({
   Image: {
     backgroundColor: COLORS.lightGrey,
     resizeMode: 'cover',
-    width:window.width * 0.4,
+    width: window.width * 0.4,
     height: ms(200),
     borderRadius: ms(10),
     marginBottom: ms(10),
@@ -69,22 +73,20 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.Bold,
     fontSize: ms(16),
     color: COLORS.dark,
-    alignSelf:'center',
-    textAlign:'center'
+    alignSelf: 'center',
+    textAlign: 'center',
   },
   Price: {
     fontFamily: FONTS.SemiBold,
     fontSize: ms(12),
     color: COLORS.dark,
-    paddingBottom:ms(10)
+    paddingBottom: ms(10),
   },
   AddWishlist: {
     alignItems: 'center',
-
     paddingHorizontal: ms(10),
     paddingVertical: ms(5),
     marginTop: ms(6),
-
     borderRadius: ms(10),
   },
   Wishlist: {

@@ -11,34 +11,23 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
-import React, {useEffect, useState, useMemo, useCallback} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import Carousel from 'react-native-reanimated-carousel';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ms} from 'react-native-size-matters';
 import {
-  getBanner,
   getProduct,
   clearProduct,
-  addWishlist,
   connectionChecker,
-  getSpesificProductBuyer,
-  getStatusOrderProduct,
-  getWishlist,
-  getStatusOrder,
   GetNumberCart,
+  getCart,
 } from '../../Redux/actions';
-import {
-  CategoryButton,
-  HomeShimmer,
-  Input,
-  ProductCard,
-} from '../../Components';
+import {HomeShimmer, Input, ProductCard} from '../../Components';
 import {COLORS} from '../../Utils';
-import {GET_STATUS_ORDER_PRODUCT} from '../../Redux/types';
 import {useIsFocused} from '@react-navigation/native';
-import { Banner1, Banner2, Banner3, BBQ, BrownCreamy, ChickenCheese, WhiteCream } from '../../Assets/Images';
-import HomeShimmerProduct from '../../Components/Skeleton/HomeShimmerProduct';
+import {Banner1, Banner2, Banner3} from '../../Assets/Images';
+
 // import { ImageBanner } from '../../../api/url';
 
 const Home = ({navigation}) => {
@@ -46,35 +35,34 @@ const Home = ({navigation}) => {
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing] = useState(false);
   const [isSearch, setIsSearch] = useState('');
-
-  const loginUser = useSelector(state => state.appData.loginUser);
 
   let banner = [
     {
-      id:1,
-      image_url:Banner1
+      id: 1,
+      image_url: Banner1,
     },
     {
-      id:2,
-      image_url:Banner2
+      id: 2,
+      image_url: Banner2,
     },
     {
-      id:3,
-      image_url:Banner3
-    }
-  ]
+      id: 3,
+      image_url: Banner3,
+    },
+  ];
 
   const product = useSelector(state => state.appData.product);
   const connection = useSelector(state => state.appData.connection);
   const numberCart = useSelector(state => state.appData.numberCart);
+  const loginUser = useSelector(state => state.appData.loginUser);
 
   banner = banner?.map(({image_url}) => image_url);
 
   const onSearch = () => {
     setDefault();
-    dispatch(getProduct(isSearch)).then(() => { 
+    dispatch(getProduct(isSearch)).then(() => {
       setIsSearch(isSearch);
       setLoading(false);
     });
@@ -89,25 +77,25 @@ const Home = ({navigation}) => {
     setLoading(true);
     setIsSearch('');
     setDefault();
-    dispatch(GetNumberCart())
-    dispatch(clearProduct()).then(()=>{
+    dispatch(getCart(loginUser.access_token));
+    dispatch(clearProduct()).then(() => {
       setTimeout(() => {
-        dispatch(getProduct(isSearch)).then(() => { 
+        dispatch(getProduct(isSearch)).then(() => {
           setLoading(false);
         });
       }, 500);
-    })
+    });
   };
 
   const onRefresh = useCallback(() => {
     setLoading(true);
-    dispatch(clearProduct()).then(()=>{
+    dispatch(clearProduct()).then(() => {
       setTimeout(() => {
-        dispatch(getProduct()).then(() => { 
+        dispatch(getProduct()).then(() => {
           setLoading(false);
         });
       }, 500);
-    })
+    });
   }, []);
 
   useEffect(() => {
@@ -117,20 +105,23 @@ const Home = ({navigation}) => {
         getData();
       });
     }
-    
   }, [connection]);
-
 
   const headerComponent = (
     <View style={styles.Layer}>
       <View style={styles.Headers}>
         <TouchableOpacity
-          style={[styles.Wishlist,{marginHorizontal:ms(8),marginLeft:ms(0)}]}
-          onPress={() =>
-            navigation.navigate('About')
-          }>
+          style={[
+            styles.Wishlist,
+            {marginHorizontal: ms(8), marginLeft: ms(0)},
+          ]}
+          onPress={() => navigation.navigate('About')}>
           <View>
-            <Icon name={'frequently-asked-questions'} size={ms(30)} color={COLORS.white} />
+            <Icon
+              name={'frequently-asked-questions'}
+              size={ms(30)}
+              color={COLORS.white}
+            />
           </View>
         </TouchableOpacity>
         <Input
@@ -138,28 +129,29 @@ const Home = ({navigation}) => {
           onChangeText={val => setIsSearch(val)}
           onPress={() => onSearch()}
         />
-          <TouchableOpacity
-            style={styles.Wishlist}
-            onPress={() =>
-              navigation.navigate('Cart')
-            }>
-            <View>
-              <Icon name={'cart'} size={ms(30)} color={COLORS.white} />
-              {numberCart>0&&
-              <View 
+        <TouchableOpacity
+          style={styles.Wishlist}
+          onPress={() => navigation.navigate('Cart')}>
+          <View>
+            <Icon name={'cart'} size={ms(30)} color={COLORS.white} />
+            {numberCart > 0 && (
+              <View
                 style={{
-                  backgroundColor:COLORS.red,width:ms(20),height:ms(20),borderRadius:15,
-                  position:'absolute',
-                  left:ms(15),
-                  bottom:ms(15),
-                  justifyContent:'center',
-                  alignItems:'center'
+                  backgroundColor: COLORS.red,
+                  width: ms(20),
+                  height: ms(20),
+                  borderRadius: 15,
+                  position: 'absolute',
+                  left: ms(15),
+                  bottom: ms(15),
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}>
                 <Text style={{}}>{numberCart}</Text>
               </View>
-              }
-            </View>
-          </TouchableOpacity>
+            )}
+          </View>
+        </TouchableOpacity>
         {/* )} */}
       </View>
       <Carousel
@@ -174,19 +166,17 @@ const Home = ({navigation}) => {
           parallaxScrollingOffset: 50,
         }}
         data={banner}
-        renderItem={({item}) => (
-          <Image style={styles.Banner} source={item} />
-        )}
+        renderItem={({item}) => <Image style={styles.Banner} source={item} />}
       />
     </View>
   );
 
   const renderItem = ({item}) => (
-      <ProductCard
+    <ProductCard
       onPress={() => {
         navigation.navigate('Detail', {
-          product_id:item.id
-        })
+          product_id: item.id,
+        });
       }}
       data={item}
     />
@@ -246,7 +236,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: ms(20),
     borderBottomLeftRadius: ms(20),
     paddingTop: StatusBarManager.HEIGHT + ms(10),
-    marginBottom:ms(10)
+    marginBottom: ms(10),
   },
   Headers: {
     flexDirection: 'row',
@@ -262,8 +252,8 @@ const styles = StyleSheet.create({
     height: ms(120),
     borderRadius: ms(12),
     width: window.width * 0.9,
-    borderColor:COLORS.white,
-    borderWidth:ms(1.5)
+    borderColor: COLORS.white,
+    borderWidth: ms(1.5),
   },
   CategoryContainer: {
     width: window.width * 0.9,

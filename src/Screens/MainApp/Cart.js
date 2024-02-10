@@ -7,24 +7,28 @@ import {
   StyleSheet,
   FlatList,
   Text,
-  TouchableOpacity
 } from 'react-native';
+
 import React from 'react';
 import {useState, useCallback} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
+
 import {
   DecreaseQuantity,
-  IncreaseQuantity,
   rupiah,
   DeleteCart,
   GetNumberCart,
-  InputQuantity
+  getCart,
+  AddToCart,
+  RemoveToCart,
 } from '../../Redux/actions';
+
 import {COLORS} from '../../Utils';
 import {ms} from 'react-native-size-matters';
 import {Button, CartCard, Header} from '../../Components';
 import {useIsFocused} from '@react-navigation/native';
-import { FONTS } from '../../Utils';
+import {FONTS} from '../../Utils';
+
 import CartShimmer from '../../Components/Skeleton/CartShimmer';
 import {Blank} from '../../Components';
 import Toast from 'react-native-toast-message';
@@ -33,34 +37,48 @@ const Cart = ({navigation}) => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
-  const [loading, setLoading] = useState(true);
-  
+  const [loading, setLoading] = useState(false);
   const connection = useSelector(state => state.appData.connection);
   const loginUser = useSelector(state => state.appData.loginUser);
-  const userData = useSelector(state => state.appData.userData);
   const cart = useSelector(state => state.appData.Carts);
-  const finalPrice = cart.map(i=>i.price*i.quantity).reduce((a, b) => a + b, 0)
-  const idProduct = cart.map(i=>i.id)
+  const finalPrice = cart.map(i => Number(i.price)).reduce((a, b) => a + b, 0);
+  const idProduct = cart.map(i => i.id);
+
+  console.log('cart', cart);
 
   const getData = () => {
-    setLoading(true)
-    dispatch(GetNumberCart()).then(() =>
-      setLoading(false),
-    );
+    dispatch(getCart(loginUser.access_token)).then(() => setLoading(false));
   };
 
-  const handleRemove = useCallback(id => {
-    dispatch(DeleteCart(id)).then(getData());
+  const handleRemove = useCallback(item => {
+    const payload = {
+      quantity: item?.quantity,
+    };
+    RemoveToCart(payload, item?.product?.id, loginUser.access_token).then(() =>
+      getData(),
+    );
   }, []);
 
-  const handlePlus = useCallback(id => {
-    dispatch(IncreaseQuantity(id)).then(getData());
+  const handlePlus = useCallback(item => {
+    const payload = {
+      quantity: 1,
+    };
+    setLoading(true);
+    AddToCart(payload, item?.product?.id, loginUser.access_token).then(() =>
+      getData(),
+    );
   }, []);
 
-  const handleMin = useCallback(id => {
-    dispatch(DecreaseQuantity(id)).then(getData());
-  }, []);
+  const handleMin = useCallback(item => {
+    const payload = {
+      quantity: -1,
+    };
+    setLoading(true);
 
+    AddToCart(payload, item?.product?.id, loginUser.access_token).then(() =>
+      getData(),
+    );
+  }, []);
 
   useState(() => {
     if (isFocused) {
@@ -68,34 +86,33 @@ const Cart = ({navigation}) => {
     }
   }, []);
 
-  const goBuy = () =>{
-    if(loginUser){
-      navigation.navigate("Checkout",{
-        idBuyer:loginUser.id,
-        idProduct:idProduct,
-        finalPrice:finalPrice,
-        cart:cart
-      })
-    }else{
+  const goBuy = () => {
+    if (loginUser) {
+      navigation.navigate('Checkout', {
+        idBuyer: loginUser.id,
+        idProduct: idProduct,
+        finalPrice: finalPrice,
+        cart: cart,
+      });
+    } else {
       navigation.navigate('Auth');
-        Toast.show({
-            type: 'error',
-            text1: 'Please Login Or Register!',
-        })
+      Toast.show({
+        type: 'error',
+        text1: 'Please Login Or Register!',
+      });
     }
-    
-  }
-  const renderItem = ({item,index}) => (
+  };
+  const renderItem = ({item, index}) => (
     <CartCard
       data={item}
       label={'cart'}
-      onPressCart={() => handleRemove(index)}
-      onPressMin={() => handleMin(index)}
-      onPressPlus={() => handlePlus(index)}
-      onPress={()=>{
+      onPressCart={() => handleRemove(item)}
+      onPressMin={() => handleMin(item)}
+      onPressPlus={() => handlePlus(item)}
+      onPress={() => {
         navigation.navigate('Detail', {
-          product_id:item.id
-        })
+          product_id: item.id,
+        });
       }}
     />
   );
@@ -112,31 +129,49 @@ const Cart = ({navigation}) => {
         <CartShimmer />
       ) : (
         <>
-        {cart.length==0?
-          <Blank caption={'Empty Cart'} />
-        :
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            keyExtractor={item => item.id}
-            numColumns={1}
-            data={cart}
-            renderItem={renderItem}
-            contentContainerStyle={styles.FlatlistContainer}
-          />
-        }
+          {cart.length === 0 ? (
+            <Blank caption={'Empty Cart'} />
+          ) : (
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              keyExtractor={item => item.id}
+              numColumns={1}
+              data={cart}
+              renderItem={renderItem}
+              contentContainerStyle={styles.FlatlistContainer}
+            />
+          )}
         </>
       )}
-        <View style={styles.Bottom}>
-            <View style={{flexDirection:'column'}}>
-                <Text style={[styles.Text,{fontSize:ms(16)}]}>Total Price</Text>
-                <Text style={[styles.TextPrice]}>Rp. {rupiah(finalPrice)}</Text>
-            </View>
-            {cart.length==0?
-                <Button style={{width:window.width*0.35,marginTop:0,height:50,backgroundColor:COLORS.grey}} caption={'Checkout'} disabled />
-                :
-                <Button style={{width:window.width*0.35,marginTop:0,height:50,backgroundColor:COLORS.green}} caption={'Checkout'} onPress={goBuy}/>
-            }
+      <View style={styles.Bottom}>
+        <View style={{flexDirection: 'column'}}>
+          <Text style={[styles.Text, {fontSize: ms(16)}]}>Total Price</Text>
+          <Text style={[styles.TextPrice]}>Rp. {rupiah(finalPrice)}</Text>
         </View>
+        {cart.length === 0 ? (
+          <Button
+            style={{
+              width: window.width * 0.35,
+              marginTop: 0,
+              height: 50,
+              backgroundColor: COLORS.grey,
+            }}
+            caption={'Checkout'}
+            disabled
+          />
+        ) : (
+          <Button
+            style={{
+              width: window.width * 0.35,
+              marginTop: 0,
+              height: 50,
+              backgroundColor: COLORS.green,
+            }}
+            caption={'Checkout'}
+            onPress={goBuy}
+          />
+        )}
+      </View>
     </View>
   );
 };
@@ -154,7 +189,7 @@ const styles = StyleSheet.create({
   },
   FlatlistContainer: {
     alignItems: 'center',
-    height:window.height*1
+    height: window.height * 1,
   },
   Text: {
     fontFamily: FONTS.Bold,
@@ -163,17 +198,17 @@ const styles = StyleSheet.create({
   TextPrice: {
     fontFamily: FONTS.SemiBold,
     color: COLORS.grey,
-    fontSize:ms(14)
+    fontSize: ms(14),
   },
-  Bottom:{
-    width:window.width*1.0,
-    position:'absolute',
-    bottom:0,
-    flexDirection:'row',
-    alignSelf:'center',
-    backgroundColor:COLORS.white,
-    padding:ms(14),
-    paddingTop:ms(8),
+  Bottom: {
+    width: window.width * 1.0,
+    position: 'absolute',
+    bottom: 0,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    backgroundColor: COLORS.white,
+    padding: ms(14),
+    paddingTop: ms(8),
     elevation: ms(10),
     shadowColor: COLORS.black,
     shadowOffset: {
@@ -182,6 +217,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: ms(0.5),
     shadowRadius: ms(4),
-    justifyContent:'space-between'
-}
+    justifyContent: 'space-between',
+  },
 });

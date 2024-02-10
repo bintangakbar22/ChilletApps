@@ -8,42 +8,47 @@ import {
   NativeModules,
   ScrollView,
   RefreshControl,
+  Platform,
 } from 'react-native';
-import React, {useEffect,useState,useCallback} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {FONTS} from '../../Utils/Fonts';
 import {COLORS} from '../../Utils/Colors';
 import {ms} from 'react-native-size-matters';
-import { getOrders, orderScreen } from '../../Redux/actions';
-import { useDispatch,useSelector } from 'react-redux';
-import { OrderList } from '../../Components';
-import { Orders1 } from './OrderList';
+import {getOrders, orderScreen} from '../../Redux/actions';
+import {useDispatch, useSelector} from 'react-redux';
+import {OrderList} from '../../Components';
+
 const Orders = () => {
   const dispatch = useDispatch();
-  const loginUser = useSelector(state=> state.appData.loginUser);
-  const userData = useSelector(state=>state.appData.userData)
-  const getData =  () =>{
-    dispatch(getOrders(loginUser.access_token,userData.id))
-  }
+  const loginUser = useSelector(state => state.appData.loginUser);
+  const userData = useSelector(state => state.appData.userData);
+
+  console.log('loginuser', loginUser);
+  const getData = () => {
+    dispatch(getOrders(loginUser.access_token, loginUser.id));
+  };
+
   useEffect(() => {
     dispatch(orderScreen('pending'));
-    getData()
+    getData();
   }, []);
 
   const screenType = useSelector(state => state.appData.orderScreen);
-  const Orders = useSelector(state=> state.appData.Orders);
+  const Orders = useSelector(state => state.appData.orders);
 
-  const ordersPending = Orders?.filter(item=>{
-    return item.status !='Success'
-  })
-  const ordersSuccess = Orders?.filter(item=>{
-    return item.status =='Success';
-  })
+  console.log('orders', Orders);
+  const ordersPending = Orders?.filter(item => {
+    return item.status !== 'SUCCESS';
+  });
+  const ordersSuccess = Orders?.filter(item => {
+    return item.status === 'SUCCESS';
+  });
 
   const [refreshing, setRefreshing] = useState(false);
-  
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    getData()
+    getData();
     setRefreshing(false);
   }, []);
 
@@ -62,26 +67,38 @@ const Orders = () => {
           marginBottom: ms(20),
         }}>
         <Text style={[styles.textBold, {fontSize: ms(18)}]}>Orders</Text>
-        <View style={{flexDirection:'row'}}>
-        {screenType == 'pending' ? (
+        <View style={{flexDirection: 'row'}}>
+          {screenType == 'pending' ? (
             <>
-              <TouchableOpacity onPress={()=>{dispatch(orderScreen('pending'))}}>
+              <TouchableOpacity
+                onPress={() => {
+                  dispatch(orderScreen('pending'));
+                }}>
                 <Text style={styles.ActivePage}>On Process </Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={()=>{dispatch(orderScreen('success'))}}>
+              <TouchableOpacity
+                onPress={() => {
+                  dispatch(orderScreen('success'));
+                }}>
                 <Text style={styles.PasivePage}> / Success</Text>
               </TouchableOpacity>
             </>
-        ) : (
+          ) : (
             <>
-                <TouchableOpacity onPress={()=>{dispatch(orderScreen('pending'))}}>
-                    <Text style={styles.PasivePage}>On Process / </Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={()=>{dispatch(orderScreen('success'))}}>
-                    <Text style={styles.ActivePage}>Success</Text>
-                </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  dispatch(orderScreen('pending'));
+                }}>
+                <Text style={styles.PasivePage}>On Process / </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  dispatch(orderScreen('success'));
+                }}>
+                <Text style={styles.ActivePage}>Success</Text>
+              </TouchableOpacity>
             </>
-        )}
+          )}
         </View>
       </View>
       <ScrollView
@@ -97,13 +114,17 @@ const Orders = () => {
             colors={['green']}
           />
         }>
-      {screenType == 'pending' ? <OrderList type={'pending'} data={ordersPending} /> : <OrderList type={'success'} data={ordersSuccess}/>}
+        {screenType == 'pending' ? (
+          <OrderList type={'pending'} data={ordersPending} />
+        ) : (
+          <OrderList type={'success'} data={ordersSuccess} />
+        )}
       </ScrollView>
     </View>
-  )
-}
+  );
+};
 
-export default Orders
+export default Orders;
 const window = Dimensions.get('window');
 const {StatusBarManager} = NativeModules;
 const styles = StyleSheet.create({
@@ -134,4 +155,4 @@ const styles = StyleSheet.create({
     color: COLORS.grey,
     fontSize: ms(14),
   },
-})
+});

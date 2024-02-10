@@ -22,15 +22,18 @@ import {
   getSpesificProductBuyer,
   IncreaseQuantity,
   DecreaseQuantity,
-  DeleteCart
+  DeleteCart,
+  getCart,
+  AddToCart,
+  RemoveToCart,
 } from '../../../Redux/actions';
 import {useDispatch, useSelector} from 'react-redux';
 import Button from '../../../Components/Others/Button';
 import {ButtonIcon, DetailProductShimmer, Input} from '../../../Components';
 import {ms} from 'react-native-size-matters';
-import { URLProduct } from '../../../Utils/Url';
+import {URLProduct} from '../../../Utils/Url';
 const Detail = ({route}) => {
-  const {product_id} = route.params;
+  const product_id = route.params?.product_id;
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -38,63 +41,87 @@ const Detail = ({route}) => {
 
   const connection = useSelector(state => state.appData.connection);
   const userData = useSelector(state => state.appData.userData);
-  const Carts = useSelector(state => state.appData.Carts) 
-  
-  const productSpesific = useSelector(state => state.appData.productSpesificBuyer);
+  const Carts = useSelector(state => state.appData.Carts);
+  const loginUser = useSelector(state => state.appData.loginUser);
+
+  const productSpesific = useSelector(
+    state => state.appData.productSpesificBuyer,
+  );
+
   var checkCart = Carts?.filter(itemS => {
-    return itemS.id == productSpesific.id;
-  })
-
-  const indexProductOfCarts = Carts.findIndex(object => {
-    return object.id === productSpesific.id;
+    return itemS?.product?.id === productSpesific?.id;
   });
-
-  console.log(Carts)
 
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const addtoCart = (prod) =>{
-    dispatch(AddCart(prod))
-      .then(()=>{
-        dispatch(getSpesificProductBuyer(product_id))
-      })
-  }
+  const addtoCart = () => {
+    const payload = {
+      quantity: 1,
+    };
+    AddToCart(payload, product_id, loginUser.access_token).then(() =>
+      cekData(),
+    );
+  };
 
-  const cekData = () =>{
+  const cekData = async () => {
     setLoading(true);
-    dispatch(getSpesificProductBuyer(product_id)).then(()=>{setLoading(false)})
-  }
+    try {
+      dispatch(getSpesificProductBuyer(product_id));
+      dispatch(getCart(loginUser.access_token)).then(() => setLoading(false));
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isFocused) {
       dispatch(connectionChecker());
       cekData();
     }
-  }, [connection]);
+  }, [connection, isFocused]);
 
   const onRefresh = useCallback(() => {
+    cekData();
+  }, []);
+
+  const handlePlus = useCallback(() => {
+    // dispatch(IncreaseQuantity(id)).then(
+    //   dispatch(getSpesificProductBuyer(product_id)),
+    // );
+    const payload = {
+      quantity: 1,
+    };
     setLoading(true);
-    dispatch(getSpesificProductBuyer(product_id))
-    .then(
-      ()=>{
-        setLoading(false)
-        setRefreshing(false);
-      })
+
+    AddToCart(payload, product_id, loginUser.access_token).then(() =>
+      cekData(),
+    );
   }, []);
 
-  const handlePlus = useCallback(id => {
-    dispatch(IncreaseQuantity(id))
-      .then(dispatch(getSpesificProductBuyer(product_id)));
+  const handleMin = useCallback(() => {
+    // dispatch(DecreaseQuantity(id)).then(
+    //   dispatch(getSpesificProductBuyer(product_id)),
+    // );
+    setLoading(true);
+    const payload = {
+      quantity: -1,
+    };
+    AddToCart(payload, product_id, loginUser.access_token).then(() =>
+      cekData(),
+    );
   }, []);
 
-  const handleMin = useCallback(id => {
-    dispatch(DecreaseQuantity(id))
-      .then(dispatch(getSpesificProductBuyer(product_id)));
-  }, []);
+  const handleRemove = useCallback(() => {
+    const payload = {
+      quantity: checkCart?.[0]?.quantity,
+    };
+    setLoading(true);
 
-  const handleRemove = useCallback(id => {
-    dispatch(DeleteCart(id))
-      .then(dispatch(getSpesificProductBuyer(product_id)));
+    RemoveToCart(payload, product_id, loginUser.access_token).then(() =>
+      cekData(),
+    );
   }, []);
 
   return (
@@ -119,8 +146,7 @@ const Detail = ({route}) => {
           }>
           <ImageBackground
             style={styles.Image}
-            source={{uri: URLProduct+ productSpesific?.image}}
-            >
+            source={{uri: URLProduct + productSpesific?.image}}>
             <TouchableOpacity style={styles.Header}>
               <ButtonIcon
                 icon="keyboard-backspace"
@@ -146,53 +172,96 @@ const Detail = ({route}) => {
             </Text> */}
           </View>
           <View style={styles.Button}>
-                {checkCart?.length!=0  ? (
-                  <View style={{flexDirection:'row',justifyContent:'space-between',width:window.width}}>
-                    <Button
-                        caption={'Remove from Cart'}
-                        style={{width: window.width * 0.52,backgroundColor:COLORS.red,marginLeft:ms(15)}}
-                        onPress={()=>{handleRemove(indexProductOfCarts)}}
+            {checkCart?.length !== 0 ? (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  width: window.width,
+                }}>
+                <Button
+                  caption={'Remove from Cart'}
+                  style={{
+                    width: window.width * 0.52,
+                    backgroundColor: COLORS.red,
+                    marginLeft: ms(15),
+                  }}
+                  onPress={() => {
+                    handleRemove();
+                  }}
+                />
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    width: window.width * 0.4,
+                    justifyContent: 'space-evenly',
+                    alignItems: 'center',
+                    marginTop: ms(10),
+                  }}>
+                  {checkCart?.[0]?.quantity > 1 ? (
+                    <TouchableOpacity
+                      style={[styles.AddWishlist]}
+                      onPress={() => {
+                        handleMin();
+                      }}>
+                      <Icon
+                        name={'minus-circle-outline'}
+                        size={ms(30)}
+                        color={COLORS.red}
                       />
-                    <View style={{flexDirection:'row',width:window.width*0.4,justifyContent:'space-evenly',alignItems:'center',marginTop:ms(10)}}>
-                      {checkCart[0]?.quantity>1?
-                      <TouchableOpacity
-                        style={[
-                            styles.AddWishlist,
-                        ]}
-                        onPress={()=>{handleMin(indexProductOfCarts)}}>
-                        <Icon name={'minus-circle-outline'} size={ms(30)} color={COLORS.red} />
-                      </TouchableOpacity>
-                      :
-                      <TouchableOpacity
-                        style={[
-                            styles.AddWishlist,
-                        ]}
-                        onPress={()=>{handleMin(indexProductOfCarts)}} disabled>
-                        <Icon name={'minus-circle-outline'} size={ms(30)} color={COLORS.grey} />
-                      </TouchableOpacity>
-                      }
-                      <View style={{padding:ms(10),paddingVertical:ms(1),borderRadius:ms(8),borderWidth:ms(0.5),borderColor:COLORS.grey}}>
-                        <Text style={[styles.Price,{fontSize:ms(18)}]} >{checkCart[0]?.quantity}</Text>
-                      </View>
-                        
-                      <TouchableOpacity
-                        style={[
-                            styles.AddWishlist,
-                        ]}
-                        onPress={()=>{handlePlus(indexProductOfCarts)}}>
-                        <Icon name={'plus-circle-outline'} size={ms(30)} color={COLORS.green} />
-                      </TouchableOpacity>
-                    </View>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={[styles.AddWishlist]}
+                      onPress={() => {
+                        handleMin();
+                      }}
+                      disabled>
+                      <Icon
+                        name={'minus-circle-outline'}
+                        size={ms(30)}
+                        color={COLORS.grey}
+                      />
+                    </TouchableOpacity>
+                  )}
+                  <View
+                    style={{
+                      padding: ms(10),
+                      paddingVertical: ms(1),
+                      borderRadius: ms(8),
+                      borderWidth: ms(0.5),
+                      borderColor: COLORS.grey,
+                    }}>
+                    <Text style={[styles.Price, {fontSize: ms(18)}]}>
+                      {checkCart?.[0]?.quantity}
+                    </Text>
                   </View>
-                ) : (
-                  <Button
-                    caption={'Add to Cart'}
-                    style={{width: window.width * 0.9,backgroundColor:COLORS.green}}
+
+                  <TouchableOpacity
+                    style={[styles.AddWishlist]}
                     onPress={() => {
-                      addtoCart(productSpesific);
-                    }}
-                  />
-                )}
+                      handlePlus();
+                    }}>
+                    <Icon
+                      name={'plus-circle-outline'}
+                      size={ms(30)}
+                      color={COLORS.green}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              <Button
+                caption={'Add to Cart'}
+                style={{
+                  width: window.width * 0.9,
+                  backgroundColor: COLORS.green,
+                }}
+                onPress={() => {
+                  addtoCart();
+                }}
+              />
+            )}
           </View>
         </ScrollView>
       )}
@@ -215,7 +284,7 @@ const styles = StyleSheet.create({
   },
   Image: {
     backgroundColor: COLORS.lightGrey,
-    width: window.width ,
+    width: window.width,
     height: ms(400),
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -294,7 +363,7 @@ const styles = StyleSheet.create({
   Description: {
     width: window.width * 0.9,
     paddingHorizontal: ms(25),
-    marginTop:ms(40)
+    marginTop: ms(40),
   },
   SubTitle: {
     fontFamily: FONTS.Medium,

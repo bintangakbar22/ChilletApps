@@ -1,10 +1,9 @@
-
 //   // const [productImage, setProductImage] = useState ([]);  // image banyak
 //   const imagePicker = async handleChange => {
-    
+
 //       // image banyak
 //       // setProductImage(prevImage=>[...prevImage,newImage])
-   
+
 //   }
 //   const deleteImage = uri =>{
 
@@ -13,13 +12,13 @@
 //   return (
 
 //             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            
+
 //               {/* image banyak*/}
 //               {/* {productImage.length<4&&
 //               <TouchableOpacity style={styles.Category} onPress={()=>{imagePicker()}}>
 //                   <Icon style={styles.Icon} name={'plus'} size={50} color={COLORS.grey} />
 //               </TouchableOpacity>
-              
+
 //               }
 //               {productImage && productImage.map(item=>{
 //                 return(
@@ -33,9 +32,8 @@
 //                 }
 //                 </>
 //                 )})} */}
-                
+
 //             </ScrollView>
-              
 
 //   );
 

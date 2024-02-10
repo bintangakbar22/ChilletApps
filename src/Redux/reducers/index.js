@@ -21,22 +21,25 @@ import {
   SAVE_ADDRESS,
   CLEAR_CART,
   ORDER_SCREEN,
-  INPUT_QUANTITY
+  INPUT_QUANTITY,
+  GET_CART,
 } from '../types';
+
 const initialState = {
-  Carts:[],
-  numberCart:0,
+  Carts: [],
+  numberCart: 0,
   authScreen: 'Login',
   loginUser: null,
   userData: {},
-  accessToken:null,
-  idUser :null,
+  accessToken: null,
+  idUser: null,
   product: [],
   productSpesific: null,
   productSpesificBuyer: null,
   connection: false,
-  orderScreen:'pending',
-  Orders:[]
+  orderScreen: 'pending',
+  orders: [],
+  cartId: null,
 };
 
 const Reducer = (state = initialState, action) => {
@@ -52,96 +55,96 @@ const Reducer = (state = initialState, action) => {
         authScreen: action.payload,
       };
     case GET_NUMBER_CART:
-            return{
-                ...state
-            }
-    case ADD_CART:
-        if(state.numberCart==0){
-            let cart = {
-                id:action.payload.id,
-                quantity:1,
-                name:action.payload.name,
-                image:action.payload.image,
-                price:action.payload.price,
-                //user_id:action.payload.user_id
-            } 
-            state.Carts.push(cart); 
-        }
-        else{
-            let check = false;
-            state.Carts?.map((item,key)=>{
-                if(item.id==action.payload.id){
-                    state.Carts[key].quantity++;
-                    check=true;
-                }
-            });
-            if(!check){
-                let _cart = {
-                    id:action.payload.id,
-                    quantity:1,
-                    name:action.payload.name,
-                    image:action.payload.image,
-                    price:action.payload.price,
-                    //user_id:action.payload.user_id
-                }
-                state.Carts.push(_cart);
-            }
-        }
-        return{
-            ...state,
-            numberCart:state.numberCart+1
-        }
-    case INCREASE_QUANTITY:
-        state.numberCart++
-        state.Carts[action.payload].quantity++;
-      
-        return{
-            ...state
-        }
-    case DECREASE_QUANTITY:
-        let quantity = state.Carts[action.payload].quantity;
-        if(quantity>1){
-            state.numberCart--;
-            state.Carts[action.payload].quantity--;
-        }
-      
-        return{
-            ...state
-        }
-    case INPUT_QUANTITY:
-      state.numberCart=action.number
-      state.Carts[action.payload].quantity= action.number;
       return {
-        ...state
-      }
-      
-    case DELETE_CART:
-        let quantity_ = state.Carts[action.payload].quantity;
-        return{
-            ...state,
-            numberCart:state.numberCart - quantity_,
-            Carts:state.Carts.filter(item=>{
-                return item.id!=state.Carts[action.payload].id
-            })
-            
+        ...state,
+      };
+    case ADD_CART:
+      if (state.numberCart === 0) {
+        let cart = {
+          id: action.payload.id,
+          quantity: 1,
+          name: action.payload.name,
+          image: action.payload.image,
+          price: action.payload.price,
+        };
+        state.Carts.push(cart);
+      } else {
+        let check = false;
+        state.Carts?.map((item, key) => {
+          if (item.id === action.payload.id) {
+            state.Carts[key].quantity++;
+            check = true;
+          }
+        });
+        if (!check) {
+          let _cart = {
+            id: action.payload.id,
+            quantity: 1,
+            name: action.payload.name,
+            image: action.payload.image,
+            price: action.payload.price,
+          };
+          state.Carts.push(_cart);
         }
+      }
+      return {
+        ...state,
+        numberCart: state.numberCart + 1,
+      };
+    case INCREASE_QUANTITY:
+      state.numberCart++;
+      state.Carts[action.payload].quantity++;
+      return {
+        ...state,
+      };
+    case DECREASE_QUANTITY:
+      let quantity = state.Carts[action.payload].quantity;
+      if (quantity > 1) {
+        state.numberCart--;
+        state.Carts[action.payload].quantity--;
+      }
+      return {
+        ...state,
+      };
+    case INPUT_QUANTITY:
+      state.numberCart = action.number;
+      state.Carts[action.payload].quantity = action.number;
+      return {
+        ...state,
+      };
+    case DELETE_CART:
+      let quantity_ = state.Carts[action.payload].quantity;
+      return {
+        ...state,
+        numberCart: state.numberCart - quantity_,
+        Carts: state.Carts.filter(item => {
+          return item.id !== state.Carts[action.payload].id;
+        }),
+      };
     case SAVE_ADDRESS:
       return {
         ...state,
-        userData:action.payload
-      }
+        userData: action.payload,
+      };
     case FETCH_LOGIN:
       return {
         ...state,
         loginUser: action.payload,
-        userData : action.userData,
-        accessToken:action.accessToken,
-        idUser : action.idUser
+        userData: action.userData,
+        accessToken: action.accessToken,
+        idUser: action.idUser,
       };
     case GET_USER_DATA:
       return {
         ...state,
         userData: action.payload,
+      };
+    case GET_CART:
+      return {
+        ...state,
+        Carts: action.payload.cart_items,
+        numberCart: action.payload.total_item,
+        cartId: action.payload.cart.id,
       };
     case UPDATE_USER_DATA:
       return {
@@ -153,8 +156,8 @@ const Reducer = (state = initialState, action) => {
         ...state,
         loginUser: null,
         userData: null,
-        Carts:[],
-        numberCart:0
+        Carts: [],
+        numberCart: 0,
       };
     case GET_BANNER:
       return {
@@ -167,11 +170,11 @@ const Reducer = (state = initialState, action) => {
         product: [...(state.product || []), ...action.payload],
       };
     case CLEAR_CART:
-      return{
+      return {
         ...state,
-        Carts:[],
-        numberCart:0,
-      }
+        carts: [],
+        numberCart: 0,
+      };
     case CLEAR_PRODUCT:
       return {
         ...state,
@@ -190,7 +193,7 @@ const Reducer = (state = initialState, action) => {
     case GET_ORDER:
       return {
         ...state,
-        Orders: action.payload,
+        orders: action.payload,
       };
     case CONNECTED:
       return {
@@ -205,13 +208,8 @@ const Reducer = (state = initialState, action) => {
     case ORDER_SCREEN:
       return {
         ...state,
-        orderScreen:action.payload
-      }
-    case GET_ORDER:
-      return {
-        ...state,
-        Orders:action.payload
-      }
+        orderScreen: action.payload,
+      };
 
     default:
       return state;

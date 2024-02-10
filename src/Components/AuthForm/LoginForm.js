@@ -17,9 +17,7 @@ const LoginForm = ({connection}) => {
       .string()
       .email('Please Enter Valid Email!')
       .required('Email is Required!'),
-    password: yup
-      .string()
-      .required('Password is Required!')
+    password: yup.string().required('Password is Required!'),
   });
 
   const goLogin = useCallback(values => {

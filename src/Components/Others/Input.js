@@ -23,60 +23,72 @@ const Input = ({
   onPress,
   numeric,
   isPassword,
-  Checkout
+  Checkout,
 }) => {
   const [isSecureText, setIsSecureText] = useState(secureTextEntry);
   const [isActive, setIsActive] = useState(false);
 
   return (
-    <View style={[styles.Container,{alignItems:Checkout?'flex-start':'center'}]}>
+    <View
+      style={[
+        styles.Container,
+        {alignItems: Checkout ? 'flex-start' : 'center'},
+      ]}>
       <View
         style={{
           ...styles.Content,
           borderColor: isActive ? COLORS.black : COLORS.grey,
-          width:placeholder=='Search'?window.width * 0.7:Checkout?window.width*0.88:window.width*0.8
+          width:
+            placeholder === 'Search'
+              ? window.width * 0.7
+              : Checkout
+              ? window.width * 0.88
+              : window.width * 0.8,
         }}>
         <Icon style={styles.Icon} name={icon} size={20} color={COLORS.dark} />
-        {numeric ?  
+        {numeric ? (
           <TextInput
-          onFocus={() => setIsActive(true)}
-          onBlur={() => setIsActive(false)}
-          style={[styles.Input, {marginHorizontal: screen == 'jual' ? 0 : 15}]}
-          keyboardType='numeric'
-          placeholder={placeholder}
-          onChangeText={onChangeText}
-          value={value}
-          secureTextEntry={isSecureText}
-          placeholderTextColor={COLORS.grey}
-          maxLength={10}
-          variant="outlined" label="Label"
-        />
-        :
+            onFocus={() => setIsActive(true)}
+            onBlur={() => setIsActive(false)}
+            style={[
+              styles.Input,
+              {marginHorizontal: screen === 'jual' ? 0 : 15},
+            ]}
+            keyboardType="numeric"
+            placeholder={placeholder}
+            onChangeText={onChangeText}
+            value={value}
+            secureTextEntry={isSecureText}
+            placeholderTextColor={COLORS.grey}
+            maxLength={10}
+            variant="outlined"
+            label="Label"
+          />
+        ) : (
           <TextInput
-          onFocus={() => setIsActive(true)}
-          onBlur={() => setIsActive(false)}
-          style={[styles.Input, {marginHorizontal: screen == 'jual' ? 0 : 15}]}
-          placeholder={placeholder}
-          onChangeText={onChangeText}
-          value={value}
-          secureTextEntry={isSecureText}
-          placeholderTextColor={COLORS.grey}
-        />
-        }
-        {
-          isPassword  && (
-            <TouchableOpacity
-              onPress={() => {
-                setIsSecureText(val => !val);
-              }}>
-              <Icon
-                name={isSecureText ? 'eye-outline' : 'eye-off-outline'}
-                size={ms(20)}
-                color={COLORS.dark}
-              />
-            </TouchableOpacity>
-          )}
-        {placeholder == 'Search' && (
+            onFocus={() => setIsActive(true)}
+            onBlur={() => setIsActive(false)}
+            style={[
+              styles.Input,
+              {marginHorizontal: screen === 'jual' ? 0 : 15},
+            ]}
+            placeholder={placeholder}
+            onChangeText={onChangeText}
+            value={value}
+            secureTextEntry={isSecureText}
+            placeholderTextColor={COLORS.grey}
+          />
+        )}
+        {isPassword && (
+          <TouchableOpacity onPress={() => setIsSecureText(val => !val)}>
+            <Icon
+              name={isSecureText ? 'eye-outline' : 'eye-off-outline'}
+              size={ms(20)}
+              color={COLORS.dark}
+            />
+          </TouchableOpacity>
+        )}
+        {placeholder === 'Search' && (
           <TouchableOpacity onPress={onPress}>
             <Icon name={'store-search'} size={ms(30)} color={COLORS.dark} />
           </TouchableOpacity>
@@ -114,12 +126,10 @@ const styles = StyleSheet.create({
   },
   Text: {
     width: window.width * 0.7,
-
     fontFamily: FONTS.Regular,
     fontSize: ms(10),
     color: COLORS.red,
     textAlign: 'justify',
-
     marginVertical: ms(3),
   },
 });

@@ -1,3 +1,3 @@
-export const URL = 'http://chillet.akmalrifqi.my.id/api/';
-export const URLImage = 'http://chillet.akmalrifqi.my.id/';
-export const URLProduct = 'http://chillet.akmalrifqi.my.id/uploads/';
+export const URL = 'https://project-pi.online/api/';
+export const URLImage = 'https://project-pi.online/';
+export const URLProduct = 'https://project-pi.online';

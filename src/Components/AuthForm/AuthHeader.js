@@ -17,7 +17,7 @@ const AuthHeader = ({screen}) => {
       }}>
       <Text
         style={[
-          selectScreen == screen ? styles.ActivePage : styles.PasivePage,
+          selectScreen === screen ? styles.ActivePage : styles.PasivePage,
         ]}>
         {screen}
       </Text>

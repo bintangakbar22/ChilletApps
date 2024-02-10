@@ -40,5 +40,5 @@ export {
   WishlistShimmer,
   Blank,
   CartCard,
-  OrderList
+  OrderList,
 };

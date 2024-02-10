@@ -7,7 +7,6 @@ import Cart from './MainApp/Cart';
 import Orders from './MainApp/Orders';
 //MainApp for bottom tabs
 
-
 import Splash from './MainApp/Other/Splash';
 import Detail from './MainApp/Other/DetailProduct';
 import Checkout from './MainApp/Checkout';
@@ -23,5 +22,5 @@ export {
   Checkout,
   About,
   Orders,
-  OrderDetail
+  OrderDetail,
 };

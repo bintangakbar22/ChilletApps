@@ -12,12 +12,11 @@ import React, {useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux/';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {ms} from 'react-native-size-matters';
-import {connectionChecker, getUserData, goLogout, typeUser} from '../../Redux/actions';
+import {connectionChecker, goLogout} from '../../Redux/actions';
 import {userIcon} from '../../Assets';
 import {AkunShimmer, ButtonShadow} from '../../Components';
-import {COLORS, FONTS, URL} from '../../Utils';
-import Toast from 'react-native-toast-message';
-import { URLImage } from '../../Utils/Url';
+import {COLORS, FONTS} from '../../Utils';
+import {URLImage} from '../../Utils/Url';
 
 const Account = () => {
   const navigation = useNavigation();
@@ -26,18 +25,13 @@ const Account = () => {
 
   const [loading, setLoading] = useState(true);
 
-  const connection = useSelector(state => state.appData.connection);
-  const loginUser = useSelector(state => state.appData.loginUser);
-  console.log("login user",loginUser)
-  const userData = useSelector(state => state.appData.userData);
+  const {connection, loginUser, userData} = useSelector(state => state.appData);
+
   useEffect(() => {
     if (isFocused) {
-      dispatch(connectionChecker()).then(()=>{
-        setLoading(false)
-      })
-    
+      dispatch(connectionChecker()).finally(() => setLoading(false));
     }
-  }, [connection, loginUser]);
+  }, [connection, loginUser, isFocused, dispatch]);
 
   return (
     <View style={styles.Container}>
@@ -52,8 +46,11 @@ const Account = () => {
         <ScrollView contentContainerStyle={styles.Box}>
           <View style={styles.Header}>
             <Text style={styles.Title}>My Account</Text>
-            { userData?.photo!=null ? (
-              <Image source={{uri: URLImage + userData?.photo}} style={styles.Image} />
+            {userData?.photo != null ? (
+              <Image
+                source={{uri: URLImage + userData?.photo}}
+                style={styles.Image}
+              />
             ) : (
               <Image source={userIcon} style={styles.Image} />
             )}
@@ -66,9 +63,7 @@ const Account = () => {
                 </Text>
                 <ButtonShadow
                   shadowColor={COLORS.yellow}
-                  onPress={() => {
-                    navigation.navigate('About');
-                  }}
+                  onPress={() => navigation.navigate('About')}
                   icon={'frequently-asked-questions'}
                   caption={'About'}
                 />
@@ -86,9 +81,7 @@ const Account = () => {
               <>
                 <ButtonShadow
                   shadowColor={COLORS.black}
-                  onPress={() => {
-                    navigation.navigate('Auth');
-                  }}
+                  onPress={() => navigation.navigate('Auth')}
                   icon={'login-variant'}
                   caption={'Login or Register'}
                 />
@@ -122,7 +115,6 @@ const styles = StyleSheet.create({
     height: ms(175),
     justifyContent: 'flex-end',
     alignItems: 'center',
-
     borderBottomLeftRadius: ms(10),
     borderBottomRightRadius: ms(10),
   },
@@ -130,7 +122,6 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.Bold,
     fontSize: ms(20),
     color: COLORS.white,
-
     top: ms(10),
   },
   Image: {
@@ -138,13 +129,11 @@ const styles = StyleSheet.create({
     width: ms(120),
     height: ms(120),
     top: ms(50),
-
     borderRadius: ms(10),
   },
   Content: {
     width: ms(320),
     alignItems: 'center',
-
     marginTop: ms(65),
   },
   Name: {

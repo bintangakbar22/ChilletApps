@@ -10,5 +10,5 @@ export const COLORS = {
   socialMedia: '#1a3834',
   disabled: '#d0d0d0',
   primaryBlue: '#000080',
-  yellow:'#F7DD04'
+  yellow: '#F7DD04',
 };

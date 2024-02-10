@@ -1,7 +1,14 @@
-import { StyleSheet, Text, View,Modal ,Dimensions,PanResponder,Animated} from 'react-native'
-import React ,{useEffect,useRef,useState} from 'react'
+import {
+  StyleSheet,
+  View,
+  Modal,
+  Dimensions,
+  PanResponder,
+  Animated,
+} from 'react-native';
+import React, {useEffect, useRef} from 'react';
 
-const BottomModal = (props) => {
+const BottomModal = props => {
   const panY = useRef(new Animated.Value(window.height)).current;
   const resetPositionAnim = Animated.timing(panY, {
     toValue: 0,
@@ -66,7 +73,7 @@ const BottomModal = (props) => {
   );
 };
 
-export default BottomModal
+export default BottomModal;
 const window = Dimensions.get('window');
 const styles = StyleSheet.create({
   overlay: {

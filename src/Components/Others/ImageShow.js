@@ -1,4 +1,4 @@
-import {Image, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import {Image, TouchableOpacity, StyleSheet} from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ms} from 'react-native-size-matters';
@@ -9,7 +9,7 @@ const ImageShow = ({onPress, uri}) => {
 
   return (
     <TouchableOpacity style={styles.Button} onPress={onPress}>
-      {image == '' ? (
+      {image === '' ? (
         <Image style={styles.Image} />
       ) : (
         <Image source={{uri: image}} style={styles.Image} />
@@ -26,7 +26,6 @@ const ImageShow = ({onPress, uri}) => {
 
 export default ImageShow;
 
-const window = Dimensions.get('window');
 const styles = StyleSheet.create({
   Button: {
     width: ms(100),

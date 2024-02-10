@@ -7,7 +7,7 @@
 <domain
     includeSubdomains="true">localhost</domain>
 <domain
-    includeSubdomains="true">chillet.akmalrifqi.my.id</domain>
+    includeSubdomains="true">project-pi.online</domain>
       <trust-anchors>
             <certificates src="system" />
             <certificates src="user" />

@@ -7,7 +7,7 @@ import {
   Cart,
   Checkout,
   OrderDetail,
-  About
+  About,
 } from '../Screens';
 import MainApp from './MainApp';
 

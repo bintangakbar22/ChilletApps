@@ -3,7 +3,6 @@ import {
   SafeAreaView,
   ScrollView,
   Text,
-  Image,
   ImageBackground,
   StatusBar,
   Dimensions,
@@ -12,13 +11,13 @@ import {
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {ms} from 'react-native-size-matters';
-import {authScreen, connectionChecker,getUserData} from '../../Redux/actions';
-import {Pattern, Logo, qiuqiusplyLogo} from '../../Assets';
+import {authScreen, connectionChecker} from '../../Redux/actions';
+import {Pattern} from '../../Assets';
 import {AuthHeader, LoginForm, RegisterForm} from '../../Components';
 import {COLORS, FONTS} from '../../Utils/';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
-const Auth = () => {
+const Login = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const selectScreen = useSelector(state => state.appData.authScreen);
@@ -30,7 +29,6 @@ const Auth = () => {
     dispatch(authScreen('Login'));
     if (loginUser) {
       navigation.replace('MainApp');
-      
     }
   }, [loginUser]);
 
@@ -39,9 +37,13 @@ const Auth = () => {
       <StatusBar backgroundColor={'transparent'} translucent />
       <ImageBackground source={Pattern} style={styles.ImageBackground} />
       <ScrollView contentContainerStyle={styles.Box}>
-       <View style={styles.SoloAluminium}>
-          <Text style={[styles.ImageSoloAluminium, {color: COLORS.red,paddingRight:ms(15)}]}>
-            Chillet 
+        <View style={styles.SoloAluminium}>
+          <Text
+            style={[
+              styles.ImageSoloAluminium,
+              {color: COLORS.red, paddingRight: ms(15)},
+            ]}>
+            Chillet
           </Text>
           <Text style={[styles.ImageSoloAluminium, {color: COLORS.black}]}>
             Apps
@@ -63,7 +65,7 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default Login;
 
 const window = Dimensions.get('screen');
 const styles = StyleSheet.create({
@@ -75,7 +77,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: window.width * 1,
     height: window.height * 1,
-    backgroundColor:COLORS.yellow
+    backgroundColor: COLORS.yellow,
   },
   Box: {
     flexGrow: 1,
@@ -93,7 +95,7 @@ const styles = StyleSheet.create({
     height: ms(100),
     marginRight: ms(10),
   },
-SoloAluminium: {
+  SoloAluminium: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

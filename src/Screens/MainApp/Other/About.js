@@ -10,17 +10,19 @@ import {
   ImageBackground,
 } from 'react-native';
 import React from 'react';
-import { Button,Header } from '../../../Components';
-import { COLORS,FONTS } from '../../../Utils';
+import {Button, Header} from '../../../Components';
+import {COLORS, FONTS} from '../../../Utils';
 import {useNavigation} from '@react-navigation/native';
 import {ms} from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { sendOnWhatsApp } from '../../../Redux/actions';
-import { Kamutahugak } from '../../../Assets/Images';
+import {sendOnWhatsApp} from '../../../Redux/actions';
+import {Kamutahugak} from '../../../Assets/Images';
 
 const About = () => {
   const navigation = useNavigation();
-  const url = 'whatsapp://send?text=' + 'Hello Harits Salsabila I Wanna Ask Some Questions With Chillet Apps &phone=6285691038590';
+  const url =
+    'whatsapp://send?text=' +
+    'Hello Harits Salsabila I Wanna Ask Some Questions With Chillet Apps &phone=6285691038590';
 
   return (
     <SafeAreaView style={styles.Container}>
@@ -30,66 +32,133 @@ const About = () => {
         barStyle={'dark-content'}
       />
       <Header title={'About'} navigation={navigation} />
-        <View style={{flexDirection: 'column',backgroundColor:COLORS.red,borderTopLeftRadius:ms(40),height:window.height}}>
-          <View 
+      <ScrollView style={{flexGrow: 1}}>
+        <View
+          style={{
+            flexDirection: 'column',
+            backgroundColor: COLORS.red,
+            borderTopLeftRadius: ms(40),
+            // height: window.height,
+          }}>
+          <View
             style={{
-              backgroundColor:COLORS.yellow,
-              width:window.width*1,
-              borderBottomRightRadius:ms(40),
-              borderTopLeftRadius:ms(40),
-              padding:ms(10)
+              backgroundColor: COLORS.yellow,
+              width: window.width * 1,
+              borderBottomRightRadius: ms(40),
+              borderTopLeftRadius: ms(40),
+              padding: ms(10),
             }}>
-            <Text style={[styles.Text, {fontSize: ms(15),alignSelf:'flex-start',marginTop:ms(15),padding:ms(10),fontFamily:FONTS.SemiBold}]}>
-             Cara Melakukan Order Pada Aplikasi Chillet :
+            <Text
+              style={[
+                styles.Text,
+                {
+                  fontSize: ms(15),
+                  alignSelf: 'flex-start',
+                  marginTop: ms(15),
+                  padding: ms(10),
+                  fontFamily: FONTS.SemiBold,
+                },
+              ]}>
+              Cara Melakukan Order Pada Aplikasi Chillet :
             </Text>
-            <View style={{flexDirection:'row',padding:ms(5)}}>
+            <View style={{flexDirection: 'row', padding: ms(5)}}>
               <Icon name={'check'} size={ms(17)} color={COLORS.red} />
-              <Text style={[styles.Text, {fontSize: ms(13.5),alignSelf:'flex-start',paddingLeft:ms(5)}]}>
-              1. Pilih produk yang diinginkan.
+              <Text
+                style={[
+                  styles.Text,
+                  {
+                    fontSize: ms(13.5),
+                    alignSelf: 'flex-start',
+                    paddingLeft: ms(5),
+                  },
+                ]}>
+                1. Pilih produk yang diinginkan.
               </Text>
             </View>
-            <View style={{flexDirection:'row',padding:ms(5)}}>
+            <View style={{flexDirection: 'row', padding: ms(5)}}>
               <Icon name={'check'} size={ms(17)} color={COLORS.red} />
-              <Text style={[styles.Text, {fontSize: ms(13.5),alignSelf:'flex-start',paddingLeft:ms(5)}]}>
-              2. Tambahkan produk kedalam keranjang belanja
+              <Text
+                style={[
+                  styles.Text,
+                  {
+                    fontSize: ms(13.5),
+                    alignSelf: 'flex-start',
+                    paddingLeft: ms(5),
+                  },
+                ]}>
+                2. Tambahkan produk kedalam keranjang belanja
               </Text>
             </View>
-            <View style={{flexDirection:'row',padding:ms(5)}}>
+            <View style={{flexDirection: 'row', padding: ms(5)}}>
               <Icon name={'check'} size={ms(17)} color={COLORS.red} />
-              <Text style={[styles.Text, {fontSize: ms(13.5),alignSelf:'flex-start',paddingLeft:ms(5)}]}>
-              3. Register akun anda pada menu My Profile
+              <Text
+                style={[
+                  styles.Text,
+                  {
+                    fontSize: ms(13.5),
+                    alignSelf: 'flex-start',
+                    paddingLeft: ms(5),
+                  },
+                ]}>
+                3. Register akun anda pada menu My Profile
               </Text>
             </View>
-            <View style={{flexDirection:'row',padding:ms(5)}}>
+            <View style={{flexDirection: 'row', padding: ms(5)}}>
               <Icon name={'check'} size={ms(17)} color={COLORS.red} />
-              <Text style={[styles.Text, {fontSize: ms(13.5),alignSelf:'flex-start',paddingLeft:ms(5)}]}>
-              4. Checkout pesanan anda
+              <Text
+                style={[
+                  styles.Text,
+                  {
+                    fontSize: ms(13.5),
+                    alignSelf: 'flex-start',
+                    paddingLeft: ms(5),
+                  },
+                ]}>
+                4. Checkout pesanan anda
               </Text>
             </View>
-            <ImageBackground source={Kamutahugak} style={{width:ms(300),height:ms(300),alignSelf:'center'}}/>
+            <ImageBackground
+              source={Kamutahugak}
+              style={{width: ms(300), height: ms(300), alignSelf: 'center'}}
+            />
           </View>
-          <View 
+          <View
             style={{
-              backgroundColor:COLORS.red,
-              width:window.width*1,
-              borderBottomRightRadius:ms(40),
-              padding:ms(10)
+              backgroundColor: COLORS.red,
+              width: window.width * 1,
+              borderBottomRightRadius: ms(40),
+              padding: ms(10),
             }}>
-            <Text style={[styles.Text, {fontSize: ms(15),alignSelf:'flex-start',marginTop:ms(15),padding:ms(10),fontFamily:FONTS.SemiBold}]}>
-             Jika ada kendala mengenai pesanan, Silahkan Hubungi  : 
+            <Text
+              style={[
+                styles.Text,
+                {
+                  fontSize: ms(15),
+                  alignSelf: 'flex-start',
+                  marginTop: ms(15),
+                  padding: ms(10),
+                  fontFamily: FONTS.SemiBold,
+                },
+              ]}>
+              Jika ada kendala mengenai pesanan, Silahkan Hubungi :
+              +6285691038590
             </Text>
             <Button
               caption={'Contact Chillet via Whatsapp'}
-              style={{width: window.width * 0.8,marginVertical: 15,backgroundColor:COLORS.green}}
-              styleText={{paddingLeft:ms(8)}}
+              style={{
+                width: window.width * 0.8,
+                marginVertical: 15,
+                backgroundColor: COLORS.green,
+              }}
+              styleText={{paddingLeft: ms(8)}}
               onPress={() => {
                 sendOnWhatsApp(url);
               }}
               whatsApp
             />
           </View>
-              
         </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -102,7 +171,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.white,
     paddingTop: StatusBarManager.HEIGHT + 20,
-    paddingBottom: Platform.OS === 'ios' ? ms(25) : ms(15),
+    // paddingBottom: Platform.OS === 'ios' ? ms(25) : ms(15),
   },
   Box: {
     paddingBottom: 25,
